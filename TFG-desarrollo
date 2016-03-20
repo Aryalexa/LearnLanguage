@@ -1,0 +1,50 @@
+TFG
+
+¿Cómo detectar la similitud de un audio de voz grabado con otro audio de voz? - How to detect how similar a speech recording is to another speech recording?
+
+link: http://stackoverflow.com/questions/17010516/how-to-detect-how-similar-a-speech-recording-is-to-another-speech-recording
+
+
+A lot of people seem to be suggesting some sort of edit distance, which IMO is a totally wrong approach for determining the similarity of two speech patterns, especially for patterns as short as OP is implying.
+
+The specific algorithms used by speech-recognition in fact are nearly the opposite of what you would like to use here. The problem in speech recognition is resolving many similar pronunciations to the same representation. The problem here is to take a number of slightly different pronunciations and get some kind of meaningful distance between them.
+
+I've done quite a bit of this stuff for large scale data science, and while I can't comment on exactly how proprietary programs do it, I can comment on how it's done in academia and provide a solution that is straightforward and will give you the power and flexibility that you want for this approach.
+
+Firstly: Assuming that what you have is some chunk of audio without any filtering done on it. Just as it would be acquired from a microphone. The first step is to eliminate background noise. There are a number of different methods for this, but I'm going to assume that what you want is something that will work well without being incredibly difficult to implement.
+
+Filter the audio using scipy's filtering module here (http://docs.scipy.org/doc/scipy/reference/signal.html ). There are a lot of frequencies that microphones pick up that are simply not useful for categorizing speech. I would suggest either a Bessel or a Butterworth filter to ensure that your waveform is persevered through filtering. The fundamental frequencies for everyday speech are generally between 800 and 2000 Hz (reference: http://en.wikipedia.org/wiki/Human_Voice ) so a reasonable cutoff would be something like 300 to 4000 Hz, just to make sure you don't lose anything.
+Look for the least active portion of speech and assume that is a reasonable representation of background noise. At this point you're going to want to run a series of fourier transforms along your data (or generate a spectrogram) and find the part of your speech recording that has the lowest average frequency response. Once you have that snapshot, you should subtract it from all other points in your audio sample.
+At this point should should have an audio file that is mostly just your user's speech and should be ready to be compared to another file that has gone through this process. Now, we want to actually clip the sound and compare this clip to some master clip.
+
+
+
+
+
+
+
+
+
+
+
+
+————————————————————————————————
+DESARROLLO
+
+1. Grabar con android:
+  Alternativa 1: Usar clase AudioRecord: http://developer.android.com/reference/android/media/AudioRecord.html (NO)
+  Alternativa 2: Usar Audio Capture: http://developer.android.com/intl/es/guide/topics/media/audio-capture.html , using the class MediaRecorder. Tenemos un bottom que graba y otro que reproduce. (HECHO sin probar).
+  	se genera un .3gp.
+  	configuraciones:
+          mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+          mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
+          mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+
+2. Filtro
+
+
+
+—————————————————————————————————
+COSAS A TENER EN CUENTA
+Enabling On-device Developer Options http://developer.android.com/intl/es/tools/device.html
+* Note: If you manually enable debugging in the manifest file, be sure to disable it in your release build (your published application should usually not be debuggable).
