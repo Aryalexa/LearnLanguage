@@ -17,7 +17,7 @@ import java.io.File;
 public class AudioActivity extends AppCompatActivity {
 
 
-    private Button btnRecord;
+    private Button btnRecord, btnPlay;
     private TextView textRecord;
     private MediaRecorder recorder;
     private String FILE;
@@ -97,8 +97,11 @@ public class AudioActivity extends AppCompatActivity {
     }
     public void endRecord()
     {
+        if (recorder !=null)
+        {
         recorder.stop();
         recorder.release();
+        }
     }
     public void startPlayback() throws Exception
     {
@@ -113,15 +116,20 @@ public class AudioActivity extends AppCompatActivity {
         player.start();
         player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() { // when sound ends
             @Override
-            public void onCompletion(MediaPlayer player) {
+            public void onCompletion(MediaPlayer mp) {
                 player.release(); // release resources
+                player = null;
             }
         });
     }
     public void stopPlayback()
     {
-        player.stop();
-        player.release();
+        if (player!=null)
+        {
+            player.stop();
+            player.release();
+        }
+
     }
 
 }
