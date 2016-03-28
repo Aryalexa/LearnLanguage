@@ -17,7 +17,7 @@ import java.io.File;
 public class AudioActivity extends AppCompatActivity {
 
 
-    private Button btnRecord, btnPlay;
+    private Button btnRecord, btnPback, btnPlay;
     private TextView textRecord;
     private MediaRecorder recorder;
     private String FILE;
@@ -38,6 +38,9 @@ public class AudioActivity extends AppCompatActivity {
         textRecord = (TextView)findViewById(R.id.textRecord);
 
         btnRecord = (Button)findViewById(R.id.btnRecord);
+        btnPback = (Button)findViewById(R.id.btnPback);
+
+
         btnRecord.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -49,26 +52,67 @@ public class AudioActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                     textRecord.setText("Recording...");
-
                     btnRecord.setText("End");
                 } else if (btnRecord.getText().toString().equals("End"))
                 {
                     endRecord();
                     textRecord.setText("");
-                    btnRecord.setText("Play");
-                } else if (btnRecord.getText().toString().equals("Play"))
+                    btnRecord.setText("Record");
+                    btnPback.setEnabled(true);
+                }
+            }
+        });
+
+
+
+
+        //clickListener of playback button
+        btnPback.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (btnPback.getText().toString().equals("Play"))
                 {
                     try {
                         startPlayback();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    btnRecord.setText("Stop");
-                } else if (btnRecord.getText().toString().equals("Stop"))
+                    btnPback.setText("Stop");
+                } else if (btnPback.getText().toString().equals("Stop"))
                 {
                     stopPlayback();
-                    btnRecord.setText("Record");
+                    btnPback.setText("Record");
                 }
+            }
+        });
+
+        btnPlay = (Button)findViewById(R.id.btnPlay);
+        btnPlay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (btnPlay.getText().toString().equals("Play"))
+                {
+                    btnRecord.setEnabled(false);
+                    player =  MediaPlayer.create(AudioActivity.this, R.raw.zico);
+                    player.start();
+                    player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {// when sound is done
+                        @Override
+                        public void onCompletion(MediaPlayer mp) {
+                            player.release(); // release resources
+                            player = null;
+                            btnRecord.setEnabled(true);
+                        }
+                    });
+                    btnPlay.setText("Stop");
+                }
+                else if (btnPlay.getText().toString().equals("Stop"))
+                {
+                    stopPlayback();
+                    btnRecord.setEnabled(true);
+                    btnPlay.setText("Play");
+                }
+
             }
         });
     }

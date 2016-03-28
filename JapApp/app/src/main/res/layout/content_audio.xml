@@ -16,22 +16,41 @@
         android:layout_height="wrap_content"
         android:text="Play"
         android:id="@+id/btnPlay"
-        android:layout_alignTop="@+id/btnRecord"
+        android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/btnRecord"
+        android:layout_alignEnd="@+id/btnRecord" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Record"
         android:id="@+id/btnRecord"
-        android:layout_centerHorizontal="true" />
+        android:layout_below="@+id/btnPlay"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="36dp"
+        android:layout_alignRight="@+id/btnPback"
+        android:layout_alignEnd="@+id/btnPback" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/textRecord"
+        android:layout_alignBaseline="@+id/btnRecord"
+        android:layout_alignBottom="@+id/btnRecord"
+        android:layout_toRightOf="@+id/btnRecord"
+        android:layout_toEndOf="@+id/btnRecord" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Playback"
+        android:id="@+id/btnPback"
         android:layout_below="@+id/btnRecord"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:enabled="false" />
 
 </RelativeLayout>
