@@ -32,6 +32,7 @@ FIRSTLY: Assuming that what you have is some chunk of audio without any filterin
 
 ————————————————————————————————
 DESARROLLO
+_______________________________
 
 1. Grabar con android:
   Alternativa 1: Usar clase AudioRecord: http://developer.android.com/reference/android/media/AudioRecord.html (NO)
@@ -43,14 +44,40 @@ DESARROLLO
           mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
   Alternativa 3: https://www.youtube.com/watch?v=jcrh8C376-c con mediaPlayer
 
+
 2. Filtro
-  alt 1: class equalizer
-  alt 2: filtro de python
+  alt 0: class equalizer o filtro de python
+  alt 1:
+  Lo mejor que podemos usar es la biblioteca TarsosDSP:
+
+  http://husk.eecs.berkeley.edu/courses/cs160-sp14/index.php/Sound_Programming
+
+  Esta biblioteca tiene funciones para filtros, para la transformada de Fourier y para pintar el espectrograma, que es todo lo que nos interesa en los pasos que tenemos que dar ahora.
+
+  Tienes los filtros en
+
+  https://github.com/JorenSix/TarsosDSP/tree/71ae353871a75d916a642dbb7377fead9d175a68/src/core/be/tarsos/dsp/filters
+
+  Tienes un ejemplo de FFT y su dibujo a partir de la línea 197 de
+
+  https://github.com/JorenSix/TarsosDSP/blob/master/src/examples/be/tarsos/dsp/example/Spectrogram.java
+
+
+
+_________________________________
+abril - 1
+- descargar el .jar, añadir
+-
+
 
 
 
 
 —————————————————————————————————
 COSAS A TENER EN CUENTA
-Enabling On-device Developer Options http://developer.android.com/intl/es/tools/device.html
-* Note: If you manually enable debugging in the manifest file, be sure to disable it in your release build (your published application should usually not be debuggable).
+*. Enabling On-device Developer Options http://developer.android.com/intl/es/tools/device.html
+ Note: If you manually enable debugging in the manifest file, be sure to disable it in your release build (your published application should usually not be debuggable).
+
+*.  speech recognition (https://www.youtube.com/watch?v=6G79QhBUvHk)
+    &&
+    text-to-speech

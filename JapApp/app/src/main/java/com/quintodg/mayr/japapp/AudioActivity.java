@@ -33,19 +33,54 @@ public class AudioActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // PLAYING
+        btnPlay = (Button)findViewById(R.id.btnPlay);
+        btnPlay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (btnPlay.getText().toString().equals("Play")) {
+                    btnRecord.setEnabled(false);
+                    btnPback.setEnabled(false);
+                    if (player != null) {
+                        player.stop();
+                        player.release();
+                    }
+                    player = MediaPlayer.create(AudioActivity.this, R.raw.zico);
+                    player.start();
+                    player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {// when sound is done
+                        @Override
+                        public void onCompletion(MediaPlayer mp) {
+                            player.release(); // release resources
+                            player = null;
+                            btnRecord.setEnabled(true);
+                            // simular click en STOP
+                        }
+                    });
+                    btnPlay.setText("Stop");
+                } else if (btnPlay.getText().toString().equals("Stop")) {
+                    stopPlayback();
+                    btnRecord.setEnabled(true);
+                    btnPlay.setText("Play");
+                }
+
+            }
+        });
+
+
+        // RECORD AND PLAYBACK
 
         FILE = Environment.getExternalStorageDirectory() + "/audioTest.3gpp";
         textRecord = (TextView)findViewById(R.id.textRecord);
-
         btnRecord = (Button)findViewById(R.id.btnRecord);
         btnPback = (Button)findViewById(R.id.btnPback);
-
 
         btnRecord.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (btnRecord.getText().toString().equals("Record"))
                 {
+                    btnPlay.setEnabled(false);
+                    btnPback.setEnabled(false);
                     try {
                         startRecord();
                     } catch (Exception e) {
@@ -59,77 +94,49 @@ public class AudioActivity extends AppCompatActivity {
                     textRecord.setText("");
                     btnRecord.setText("Record");
                     btnPback.setEnabled(true);
+                    btnPlay.setEnabled(true);
                 }
             }
         });
-
-
-
 
         //clickListener of playback button
         btnPback.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (btnPback.getText().toString().equals("Play"))
+                if (btnPback.getText().toString().equals("Playback"))
                 {
+                    btnPlay.setEnabled(false);
                     try {
                         startPlayback();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                    textRecord.setText("Playing...");
                     btnPback.setText("Stop");
                 } else if (btnPback.getText().toString().equals("Stop"))
                 {
                     stopPlayback();
-                    btnPback.setText("Record");
+                    textRecord.setText("");
+                    btnPback.setText("Playback");
+                    btnPlay.setEnabled(true);
                 }
             }
         });
 
-        btnPlay = (Button)findViewById(R.id.btnPlay);
-        btnPlay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-                if (btnPlay.getText().toString().equals("Play"))
-                {
-                    btnRecord.setEnabled(false);
-                    player =  MediaPlayer.create(AudioActivity.this, R.raw.zico);
-                    player.start();
-                    player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {// when sound is done
-                        @Override
-                        public void onCompletion(MediaPlayer mp) {
-                            player.release(); // release resources
-                            player = null;
-                            btnRecord.setEnabled(true);
-                        }
-                    });
-                    btnPlay.setText("Stop");
-                }
-                else if (btnPlay.getText().toString().equals("Stop"))
-                {
-                    stopPlayback();
-                    btnRecord.setEnabled(true);
-                    btnPlay.setText("Play");
-                }
-
-            }
-        });
     }
 
     public void startRecord() throws Exception
     {
-        if (recorder !=null)
-        {
-            recorder.release();
-        }
-
         File fileOut = new File(FILE);
-        if (fileOut!=null)
+        if (fileOut != null)
         {
             fileOut.delete(); // overwrite any existing file
         }
 
+        if (recorder != null) {
+            recorder.release();
+        }
         recorder = new MediaRecorder();
         recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
@@ -141,15 +148,15 @@ public class AudioActivity extends AppCompatActivity {
     }
     public void endRecord()
     {
-        if (recorder !=null)
+        if (recorder != null)
         {
-        recorder.stop();
-        recorder.release();
+            recorder.stop();
+            recorder.release();
         }
     }
     public void startPlayback() throws Exception
     {
-        if (player!=null)
+        if (player != null)
         {
             player.stop();
             player.release();
@@ -168,12 +175,10 @@ public class AudioActivity extends AppCompatActivity {
     }
     public void stopPlayback()
     {
-        if (player!=null)
+        if (player != null)
         {
             player.stop();
             player.release();
         }
-
     }
-
 }
