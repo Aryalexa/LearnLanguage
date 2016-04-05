@@ -14,7 +14,7 @@ import android.widget.Button;
 public class MainActivity extends AppCompatActivity {
 
 
-    private static Button button_start;
+    private static Button button_start, button_example, button_tarsos;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +45,22 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent("com.quintodg.mayr.japapp.AudioActivity");
+                startActivity(intent);
+            }
+        });
+        button_example = (Button)findViewById(R.id.btn_example);
+        button_example.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent("com.quintodg.mayr.japapp.ExampleActivity");
+                startActivity(intent);
+            }
+        });
+        button_tarsos = (Button)findViewById(R.id.btn_tarsos);
+        button_tarsos.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent("com.quintodg.mayr.japapp.TarsosDSPActivity");
                 startActivity(intent);
             }
         });

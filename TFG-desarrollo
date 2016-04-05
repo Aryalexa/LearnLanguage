@@ -17,7 +17,7 @@ FIRSTLY: Assuming that what you have is some chunk of audio without any filterin
 
 * Look for the least active portion of speech and assume that is a reasonable representation of background noise. At this point you're going to want to run a series of fourier transforms along your data (or generate a spectrogram) and find the part of your speech recording that has the lowest average frequency response. Once you have that snapshot, you should subtract it from all other points in your audio sample.
 
-* At this point should should have an audio file that is mostly just your user's speech and should be ready to be compared to another file that has gone through this process. Now, we want to actually clip the sound and compare this clip to some master clip.
+* At this point you should have an audio file that is mostly just your user's speech and should be ready to be compared to another file that has gone through this process. Now, we want to actually clip the sound and compare this clip to some master clip.
 
 
 
@@ -65,10 +65,20 @@ _______________________________
 
 
 _________________________________
-abril - 1
-- descargar el .jar, añadir
--
+abril - 1,2
+- TARSOS DSP descargar el .jar, añadir a libs
 
+- grabar
+  -
+
+
+- dibujar spectogram
+  - la clase spectogram es un Jframe
+  - hay que hacerlo en un activity dibujando una clase surfaceView que dibuja en un canvas (http://obviam.net/index.php/a-very-basic-the-game-loop-for-android/, https://www.youtube.com/watch?v=Z2YogvILjvo)
+  - spectogram necesita un archivo => que formato de audio debe tener?
+
+
+  - pasando de IU java a android.... como mostrar la imagen? bufferedimage?
 
 
 

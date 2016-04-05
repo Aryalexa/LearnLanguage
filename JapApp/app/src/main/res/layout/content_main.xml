@@ -14,7 +14,23 @@
         android:layout_height="wrap_content"
         android:text="START"
         android:id="@+id/button_start"
+        android:layout_marginTop="117dp"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="178dp" />
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Example"
+        android:id="@+id/btn_example"
+        android:layout_below="@+id/button_start"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tarsos"
+        android:id="@+id/btn_tarsos"
+        android:layout_below="@+id/btn_example"
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>
