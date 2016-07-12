@@ -36,7 +36,7 @@ public class TarsosDSPActivity extends AppCompatActivity {
         dispatcher.addAudioProcessor(new PitchProcessor(PitchProcessor.PitchEstimationAlgorithm.FFT_YIN, 22050, 1024, new PitchDetectionHandler() {
             @Override
             public void handlePitch(PitchDetectionResult pitchDetectionResult, AudioEvent audioEvent) {
-                final float pitchInHz = 3;//pitchDetectionResult.getPitch();
+                final float pitchInHz = pitchDetectionResult.getPitch();
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
