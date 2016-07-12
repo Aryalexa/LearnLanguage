@@ -1,0 +1,192 @@
+<!doctype html>
+<html>
+<head>
+    <title>TFG</title>
+
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link href='https://fonts.googleapis.com/css?family=Lato:400,300,700' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Dosis' rel='stylesheet' type='text/css'>
+
+</head>
+
+<body>
+
+<h1 class="font-dosis text-center font-big green">TFG: Online Japanese learning</h1>
+<div class="row">
+<!-- ____________________________ RECORDS __________________________________ -->
+  <div class="col-md-6 text-center top-marg">
+    <h1 class="font-dosis font-big green">records</h1>
+    <h4>Diario</h4>
+
+    <img width="300" src="http://cdn.unbelievable-facts.com/wp-content/uploads/2016/02/shutterstock_140731432.jpg">
+
+    <hr>
+    <h3 class="font-dosis green">FECHAS</h3>
+    <p>
+      <b>Entrega memoria al director</b>: J 1 sept 2016 <br>
+      <b>Entrega informe del director</b>: X 7 sept 2016<br>
+      <b>Entrega de memoria en secretaría</b>: M 13 sept 2016 <br>
+      <b>Publicación calendarios de presentaciones orales</b>: L 12 sept 2016<br>
+      <b>Presentaciones</b>: V 16, L 19 sept 2016<br>
+    </p>
+
+    <hr>
+
+    <p><a href="Antes_de_verano.html" >Antes de verano</a></p>
+    <iframe width="600" src="Antes_de_verano.html"></iframe>
+
+    <p><a href="7-7.html">7/7</a></p>
+    <iframe width="600" src="7-7.html"></iframe>
+
+    <p><a href="7-8.html">7/8</a></p>
+    <iframe width="600" src="7-8.html"></iframe>
+
+    <p><a href="7-9.html">7/9</a></p>
+    <iframe width="600" src="7-9.html"></iframe>
+
+  </div>
+
+<!-- _______________________________ INFO __________________________________ -->
+
+  <div class="col-md-6 top-marg">
+
+    <div class="text-center">
+      <h1 class="font-dosis font-big green">info</h1>
+      <h4>Información</h4>
+      <img width="300" src="https://upload.wikimedia.org/wikipedia/commons/1/18/Plants-Sicily-bjs-2.jpg">
+    </div>
+
+    <hr>
+    <h3 class="font-dosis green">DESCRIPCIÓN</h3>
+    <p>
+      <b>Título</b>: Aprendizaje de japonés online <br>
+      <b>Directores</b>: Adrián Riesco y Enrique Martín <br>
+      <b>Estudiante</b>: Mayra Alexandra Castrosqui Florian <br>
+    </p>
+    <p>
+      Se propone implementar una aplicación para dispositivos móviles para el
+      estudio autónomo del japonés. En concreto, se usará el micrófono para la
+      <b>práctica de la pronunciación</b>, una característica inédita en aplicaciones
+      no comerciales y que requerirá el tratamiento del audio. Asimismo, se
+      aprovechará la pantalla táctil para la <b>práctica de la caligrafía</b>. Por último,
+      se propone generar taxomomías de manera automática para sistematizar el
+      aprendizaje de <b>vocabulario</b>. En concreto, es especialmente interesante la
+      práctica de la pronunciación como objetivo tanto en el campo de la Informática
+      como de las Matemáticas.
+    </p>
+    <p>
+      Esta aplicación requerirá que el estudiante:
+    </p>
+    <ul>
+      <li>Elimine el ruido, para lo que deberá primero analizar la onda resultante
+      del audio, identificar y eliminar el ruido de fondo, eliminar las frecuencias
+      fuera del alcance humano para compresión y comparar el resultado final con
+      una "onda maestra” para asegurarse de la corrección del resultado.</li>
+      <li>Compare la onda introducida con la de referencia. Para ello es necesario
+      crear un espectrograma y normalizarlo para identificar diferencias aceptables
+      en velocidad, por un lado, y en volumen, por otro.</li>
+      <li>Realice la comparación final basándose en matrices. En principio pretendemos
+      utilizar la similitud coseno, pero puede resultar interesante implementar
+      otras variantes y comparar los resultados.</li>
+    </ul>
+
+<!-- __________________________ INFO: APRENDER _____________________________ -->
+
+    <hr>
+    <h3 class="font-dosis green">Para aprender Android</h3>
+    En el sitio oficial <a href="https://developer.android.com/training/index.html">developer.android.com/traning</a>
+    <br>
+    Libros (bucm online):
+    <a href="http://cisne.sim.ucm.es/record=b3249256~S6*spi">1</a>,
+    <a href="http://cisne.sim.ucm.es/record=b3292591~S6*spi">2</a>
+    <br>
+    <a href="#">link</a> <!-- EXAMPLE LINK -->
+
+<!-- __________________________ INFO: APLICACION ____________________________ -->
+
+    <hr>
+    <h3 class="font-dosis green">Detalles de la aplicación</h3>
+    * Elegir nivel de API, Minimum SDK (API 15)
+    <br>
+    la más baja de Ice Cream Sándwich, que unifica tableta y móvil: API 14.
+    La 14 aparece como obsoleta. Puede ser más interesante escoger la 15,
+    que es Ice Cream Sandwich 4.0.3 y 4.0.4.
+    La diferencia será mínima y no está marcada como obsoleta.
+    <br>
+    * targetSdkVersion 23
+    <br>
+    * Móvil a emular, piensa en un Samsung o Nexus moderno.
+    <br>
+    * Móvil usado: Samsung SM-G800F (Android 4.4.2, API 19)
+
+
+<!-- ____________________________ INFO: SONIDO _____________________________ -->
+
+    <hr>
+    <h3 class="font-dosis green">FUN: 1. Practicar pronunciación</h3>
+    <p>
+      * Bibliotecas de Android que pueden ser interesante para esta fase del proyecto:
+      <a href="http://developer.android.com/reference/android/media/AudioRecord.html">AudioRecord</a>,
+      <a href="http://developer.android.com/reference/android/media/audiofx/Equalizer.html">Equalizer</a>
+      <br>
+      Además, una externa que también puede estar bien:
+      <a href="http://commons.apache.org/proper/commons-math/userguide/index.html">apache commmons-math</a>
+      <br>
+      * Usar es la biblioteca TarsosDSP:
+      <a href="http://husk.eecs.berkeley.edu/courses/cs160-sp14/index.php/Sound_Programming">Sound Programming</a>
+      Esta biblioteca tiene funciones para filtros, para la transformada de Fourier
+      y para pintar el espectrograma, que es todo lo que nos interesa en los pasos
+      que tenemos que dar ahora.
+      <br>
+      Tienes los filtros en
+      <a href="https://github.com/JorenSix/TarsosDSP/tree/71ae353871a75d916a642dbb7377fead9d175a68/src/core/be/tarsos/dsp/filters">filtros</a>
+      <br>
+      Tienes un ejemplo de FFT y su dibujo a partir de la línea 197 de
+      <a href="https://github.com/JorenSix/TarsosDSP/blob/master/src/examples/be/tarsos/dsp/example/Spectrogram.java">Spectograma.java</a>
+
+
+    </p>
+    <ul>
+      <li>grabar</li>
+      <li>visualizar</li>
+      <li>comparar</li>
+
+    </ul>
+    *
+
+<!-- _________________________ INFO: CALIGRAFIA ____________________________ -->
+
+<!-- ________________________ INFO: VOCABULARIO ____________________________ -->
+
+<!-- __________________________ IDEAS _____________________________ -->
+
+    <hr>
+    <h3 class="font-dosis green">I D E A S</h3>
+    Multiplataforma? (pregunta del gym)
+    <br>
+    Conclusiones, aportaciones
+    <br>
+    <br>
+    <a href="#">link</a> <!-- EXAMPLE LINK -->
+<!-- __________________________ PROB  _____________________________ -->
+
+    <hr>
+    <h3 class="font-dosis green">Problemas detectados</h3>
+    Prob:
+    <br>
+    Sol:
+    <br><br>
+    Prob:
+    <br>
+    Sol: <a href="#">link</a> <!-- EXAMPLE LINK -->
+
+  </div>
+
+</div>
+</body>
+</html>
