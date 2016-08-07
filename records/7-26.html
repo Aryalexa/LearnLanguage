@@ -1,0 +1,118 @@
+<!doctype html>
+<html>
+<head>
+    <title>Día 7/26, 7/27</title>
+
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link href='https://fonts.googleapis.com/css?family=Lato:400,300,700' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Dosis' rel='stylesheet' type='text/css'>
+
+</head>
+
+<body>
+<div class="">
+  <h2 class="font-dosis green">Hoy: 7/26, 7/27</h2>
+
+  <h3>Día anterior</h3>
+  <ul>
+    <li>Recaudación de información</li>
+
+  </ul>
+
+  <h3>Planes para hoy</h3>
+  <ul>
+    <li>Continuar Android-Pronunciación</li>
+    <li>Continuar Java-Python</li>
+  </ul>
+
+  <h3>records</h3>
+  <a href="http://www.hermosaprogramacion.com">hermosa programacion</a>
+  <h4>
+    Android-Pronunciación
+  </h4>
+  <ol>
+    <li> *<a href="http://stackoverflow.com/questions/6979352/how-can-i-compare-2-audio-files-programmatically" target="_blank">
+      StackOverflow - how can i compare 2 audio files programmatically</a>.
+      <br>
+      1. Look at open source projects like: <a href="http://wiki.musicbrainz.org/Fingerprinting">Audio Fingerprint - MusicBrainz</a>
+      <br>
+      2. Have a <b>server</b> doing audio fingerprinting computation that is not
+       suitable for mobile device anyway. And then your mobile app uploads your files
+       to the server and gets the analysis result for display. SEE:
+       <b><a href="http://royvanrijn.com/blog/2010/06/creating-shazam-in-java/">USEFUL GUIDE!!! ('shazam' in java)</a></b>
+       <br>
+      3. How shazam <a href="http://gizmodo.com/5647458/how-shazam-works-to-identify-nearly-every-song-you-throw-at-it">works</a>.
+      <br>
+      4. A comment and a question
+      <br> - A recommends: [Apply bandpass filter to reduce noise >
+          Normalize for amplitude >
+          Calculate the cross-correlation]. It can be fairly Mhz intensive.
+          The DSP details are in the well known text:
+          "Digital Signal Processing" by Alan V. Oppenheim and Ronald W. Schafer
+      <br> - B answers: That won't take into account the differences in accents and talking speed.
+      <br> - Me: WHY WHY, YOU HAVE TO KNOW.
+    </li>
+    <li> <a href="http://stackoverflow.com/questions/5628863/how-to-compare-spoken-audio-against-reference-recording-language-learning" target="_blank">
+      StackOverflow - how-to-compare-spoken-audio-against-reference-recording-language-learning</a>.
+      <br>HMM algorithms (hidden marko model). C coding.
+      <br>Dynamic Time Warping (DTW) (<a href="http://en.wikipedia.org/wiki/Dynamic_time_warping">wiki</a>).
+    </li>
+    <li> <a href="http://stackoverflow.com/questions/7078226/comparing-audio-recordings" target="_blank">
+      StackOverflow - comparing-audio-recordings</a> nah.
+    </li>  
+  </ol>
+
+  <p>
+    * <a href="https://github.com/ispikit/ispikit-cordova" target="_blank">Github - Cordova plugin for Ispikit pronunciation assessment and speech recognition</a>, (.java descargado)
+
+  </p>
+  <br>
+  <h4>Java-Python</h4>
+  <p>
+    Searched 'use python within java', 'python from java'
+  </p>
+  <ol>
+    <li><a href="http://stackoverflow.com/questions/1164810/using-python-from-within-java">
+      StackOverflow using-python-from-within-java</a>. Call the python interpreter directly from Java:
+      <a href="https://wiki.python.org/jython/JythonMonthly/Articles/September2006/1">(*)</a>.
+
+    </li>
+    <li><a href="http://stackoverflow.com/questions/8898765/calling-python-in-java">
+      StackOverflow - calling-python-in-java</a>. 1. Call python functions from Java code with <b>Jython</b>, that is as long as your
+      python code itself runs under jython, i.e. doesn't use some c-extensions that aren't supported.
+      2. Otherwise you can use <b>org.python.util.PythonInterpreter</b> from the new Java6 interpreter support.
+    </li>
+    <li><a href="https://bytes.com/topic/python/answers/22390-executing-jython-function-java">
+      Consejo de foro para usar el .py desde un .java</a>
+    </li>
+    <li><a href="http://www.jython.org/jythonbook/en/1.0/JythonAndJavaIntegration.html">Jython</a> - Using Jython Within Java Applications.
+    </li>
+    <li><a href="http://pythonhosted.org/javabridge/java2python.html">python - javabridge</a> (?).
+    </li>
+  </ol>
+  <br>
+  <h4>Record audio</h4>
+  <ol>
+    <li><a href="http://www.newventuresoftware.com/blog/record-play-and-visualize-raw-audio-data-in-android">
+      recording 1</a>
+      El sonido se graba en muestras discretas. La velocidad con la que se toman estas muestras se llama 'sample rate'.
+      Se suele usar 44100 Hz para grabar sonidos, ie, se cogen 44100 muestras de la señal analógica cada segundo.
+      El método más común de representar sonido analógico digitalmente se llama PCM (Pulse-code modulation)
+      (the most common PCM bit depth is a signed short or 16 bits).
+      Todo dispositivo android asoportan la captura de audio con 1 canal a 44100 Hz en 16-bit PCM encoding (Ver AudioFormat).
+      <br>
+      Usar AudioRecord class. Se necesita una fuente de audio, una config de canal, codificación y buffer size.
+      <br> buffer size: está en bytes y representa el nñumero de bytes que podemos coger cada vez, usa getMinBufferSize
+
+    </li>
+  </ol>
+  <br>
+</div>
+
+</body>
+</html>
