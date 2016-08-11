@@ -119,13 +119,19 @@
       de la grabacion con startRecording() y stop().
       <br>Cada vez que estemos leyendo datos, el sistema se quedará bloquado hasta completar el buffer (41s en el ejemplo).
       Se recomienda para los datos usar el clásico patron Productor-Consumidor.
-
     </li>
-    <li> <a href="http://royvanrijn.com/blog/2010/06/creating-shazam-in-java/">saving and transforming</a>.
+    <li> <a href="http://royvanrijn.com/blog/2010/06/creating-shazam-in-java/">transforming</a>.
       Tenemos un array de bytes. Pero tiene su dominio en el tiempo, no nos sirve (ver articulo
       <a href="https://laplacian.wordpress.com/2009/01/10/how-shazam-works/">how it works</a>),
       haremos un analisis de espectro, luego necesitamos hacer una transformacion.
       <br>Aplicaremos la <b>transformada de fourier</b>  lo que nos da un dominio de frecuencia.
+      <br>El problema que podemos encontrar, al transformar los datos en unos con dominio la frecuencia, se pierde la información del tiempo.
+      Sabremos la magnitud de todas las frecuencias pero no cuándo aparecen. Usaremos una 'ventana deslizante',
+      cogeremos cachos de los datos y transformaremos solo este trozo.
+      Sabremos la magnitud de todas las frecuencias de esta parte.
+      Despues de hacer la transformacion FFT tenemos un array 2D con todos los chunks o trozos como Complex[],
+       contiene las frecuencias de todos los datos.
+      <a href="https://github.com/blanche/shayam">proyecto github</a>.
     </li>
 
     <li>
@@ -164,6 +170,7 @@
       para obtener el id de la sesion
       (<a href="http://www.101apps.co.za/articles/perfect-sound-using-the-equalizer-effect-a-tutorial.html">3</a>)</li>
   </ol>
+  <a href="http://blog.smartbear.com/programming/embedding-jython-in-java-applications/">more about python and android</a>
 
   <h4>Implementacion</h4>
   <p>
@@ -172,9 +179,12 @@
       record and visualize in android</a>.
     <br>[yes] Hecho waveform en vivo: coge el sonido y muestra la onda en el dibujo,
     reproduce un archivo '.raw'. (<a href="https://github.com/newventuresoftware/WaveformControl">github code</a>)
-    <br>[test] Hecha una clase para el filtro bandpass. Adaptar a lo que quiero y probar (<a
+    <br>[yes] Guardar in internal storage (usado record-audio-3)
+    <br>[test] Filter - Hecha una clase para el filtro bandpass. Adaptar a lo que quiero y probar (<a
     href="https://cardinalpeak.com/blog/a-c-class-to-implement-low-pass-high-pass-and-band-pass-filters/">guide</a>)
-    <br>[] Guardar! y filtrar. bandpass y luego fourier ...
+    <br>[] Filter - equalizer?
+    <br>[] FFT
+    
   </p>
   <br>
 </div>
