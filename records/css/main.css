@@ -7,6 +7,9 @@ img{
 a{
 	color: #FF6138;
 }
+.all{
+	padding: 40px
+}
 .no-float{
 	float: none;
 }
@@ -25,6 +28,9 @@ a{
 }
 .green{
 	color: #79BD8F;
+}
+h4{
+	color: #6600cc
 }
 .purple{
 	color: #6600cc

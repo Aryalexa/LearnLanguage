@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-    <title>Día 8/9, 8/11</title>
+    <title>Día 8/9, 8/11, 8/12</title>
 
     <meta charset="utf-8" />
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
@@ -15,8 +15,8 @@
 </head>
 
 <body>
-<div class="">
-  <h2 class="font-dosis green">Hoy: 8/9, 8/11</h2>
+<div class="all">
+  <h2 class="font-dosis green">Hoy: 8/9, 8/11, 8/12</h2>
 
   <h3>Día anterior</h3>
   <ul>
@@ -31,29 +31,71 @@
   <ul>
     <li>probar python filter</li>
   </ul>
-
+<hr>
   <h3>records</h3>
-  <a href="http://www.hermosaprogramacion.com">hermosa programacion</a>
   <h4>
     Android-Pronunciación
   </h4>
+  <h5>Como usar Python en Android</h5>
   <ol>
     <li>
-      <a href="http://blog.smartbear.com/programming/embedding-jython-in-java-applications/">more about python and android</a>
+      [no] <a href="https://github.com/damonkohler/sl4a/tree/master/android/ScriptingLayerForAndroid">SL4A</a>
+      Es una app android que ejecuta scripts de varios lenguajes. Podria usarse este proyecto
+      como libreria en una app y asi ejecutar scripts de python que modifiquen archivos internos.
+      (es dificil pasarle parametros a los metodos python con esta solucion)
     </li>
     <li>
-      <a href="https://android.googlesource.com/platform/tools/swt/+/android-4.4_r1.1/monkeyrunner">Monkey tunner!</a>
-      Tiene el python included
+      [yes] <a href="http://stackoverflow.com/questions/9381906/how-to-call-a-python-method-from-a-java-class">
+      StackOverflow - how-to-call-a-python-method-from-a-java-class</a> nos presenta a
+      <a href="http://www.jython.org/javadoc/org/python/util/PythonInterpreter.html">Jython</a>, un interprete de python
+      para java.
+      (parece que se pueden pasar parametros pero tambien se intentara leer de archivo (por la conversion de tipos/clases))
     </li>
+    <li>
+      (jython info)<a href="http://blog.smartbear.com/programming/embedding-jython-in-java-applications/">
+      embedding-jython-in-java-applications</a> more about python and android
+    </li>
+    <li>
+      (jython info)<a href="https://android.googlesource.com/platform/tools/swt/+/android-4.4_r1.1/monkeyrunner">Monkey tunner!</a>
+      Tiene el python/jython included.
+    </li>
+  </ol>
+
+  <h5>Usando Jython</h5>
+  <ol>
+    <li> <a href="http://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.butter.html#scipy.signal.butter">
+      ButterworthBandpass filter</a> de python! Usamos este <a href="http://scipy.github.io/old-wiki/pages/Cookbook/ButterworthBandpass">
+      cookbook</a> para usarlo.
+    </li>
+    <li>
+    </li>
+  </ol>
+
+  <h5>oo</h5>
+  <ol>
+    <li>* Para el filtrado puedo usar lo implememtado en java o python y sus libs!</li>
+    <li>* El espectrograma es resultado de FFT! puedo usar la lib math3 (Maven Central) de java o pyhton!</li>
+    <li>Despues de hacer eso, se podria comparar!</li>
   </ol>
 
 
   <h4>Implementacion</h4>
   <p>
-    <br>Call a python Script: <a href="http://stackoverflow.com/questions/9381906/how-to-call-a-python-method-from-a-java-class">
+    <b>Workflow</b>:
+  </p>
+  <p>
+    Clase Filter de java basada en esta
+    <a href="https://cardinalpeak.com/blog/a-c-class-to-implement-low-pass-high-pass-and-band-pass-filters/">
+    implementacion</a>.
+    <br>
+    <br>Call a python Script with jython: <a href="http://stackoverflow.com/questions/9381906/how-to-call-a-python-method-from-a-java-class">
       here!</a>
   </p>
   <br>
+  <p>
+    no olvidar: borrar los files temporales internos!
+    <br>se podrian utilizar los dibujitos del filtro.py jejeje
+  </p>
 </div>
 
 </body>
