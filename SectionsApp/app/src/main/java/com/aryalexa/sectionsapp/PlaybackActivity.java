@@ -77,7 +77,7 @@ public class PlaybackActivity extends AppCompatActivity {
 
     private short[] getAudioSample() throws IOException{
         //TODO pasarle una clave para coger el audio especificado cada vez
-        InputStream is = getResources().openRawResource(R.raw.jinglebells);
+        InputStream is = getResources().openRawResource(R.raw.jinglebells2);
         byte[] data;
         try {
             data = IOUtils.toByteArray(is);
