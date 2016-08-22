@@ -1,6 +1,6 @@
 package com.aryalexa.sectionsapp;
 
-/*
+
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -12,7 +12,7 @@ import org.apache.commons.math3.transform.FastFourierTransformer;
 import org.apache.commons.math3.transform.TransformType;
 
 //////compile 'org.apache.commons:commons-math3:3.6.1'
-
+//////including as lib >> org.apache.commons.io.jar
 
 public class Transform {
 
@@ -72,4 +72,3 @@ public class Transform {
 
 
 }
-*/

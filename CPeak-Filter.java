@@ -59,7 +59,7 @@ package com.newventuresoftware.waveformdemo;
  * 		Filter(filterType filt_t, int num_taps, double Fs, double Fl, double Fu);
  *
  * filt_t: is LPF, HPF or BPF
- * num_taps: is the number of taps you want the filter to use
+ * num_taps: is the number of taps you want the filter to use (= order+1)
  * Fs: is the sampling frequency of the digital data being filtered
  * Fx: is the "transition" frequency for LPF and HPF filters
  * Fl, Fu: are the upper and lower transition frequencies for BPF filters
@@ -135,8 +135,8 @@ public class Filter {
     private double m_Fs;
     private double m_Fx;
     private double m_lambda;
-    private double m_taps[];
-    private double m_sr[];
+    private double m_taps[]; // b_i , coeff
+    private double m_sr[]; // x[i]
 
     // Only needed for the bandpass filter case
     private double m_Fu, m_phi;
@@ -151,8 +151,8 @@ public class Filter {
         }
      */
 
+    /*For LPF and HPF*/
     public Filter(FilterType filt_t, int num_taps, double Fs, double Fx){
-        /*For LPF and HPF*/
         m_error_flag = 0;
         m_filt_t = filt_t;
         m_num_taps = num_taps;
@@ -174,10 +174,10 @@ public class Filter {
         if( m_filt_t == FilterType.LPF ) designLPF();
         else if( m_filt_t == FilterType.HPF ) designHPF();
         else ECODE(-5);
-    }
+      }
 
+    /*For BPF only*/
     public Filter(FilterType filt_t, int num_taps, double Fs, double Fl, double Fu) {
-        /*For BPF only*/
         m_error_flag = 0;
         m_filt_t = filt_t;
         m_num_taps = num_taps;
@@ -215,7 +215,7 @@ public class Filter {
 
     }
 
-    double do_sample(double data_sample){
+    double do_sample (double data_sample){
         // esto se aplica a cada muestra que es un double, hay que recorrer todas las muestras!
         int i;
         double result;
@@ -228,7 +228,8 @@ public class Filter {
         m_sr[0] = data_sample;
 
         result = 0;
-        for(i = 0; i < m_num_taps; i++) result += m_sr[i] * m_taps[i];
+        for(i = 0; i < m_num_taps; i++)
+          result += m_sr[i] * m_taps[i];
 
         return result;
     }
