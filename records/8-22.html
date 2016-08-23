@@ -1,0 +1,128 @@
+<!doctype html>
+<html>
+<head>
+    <title>Día 8/20</title>
+
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link href='https://fonts.googleapis.com/css?family=Lato:400,300,700' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Dosis' rel='stylesheet' type='text/css'>
+
+</head>
+
+<body>
+<div class="all">
+  <h2 class="font-dosis green">Hoy: 8/20</h2>
+
+  <h3>Día anterior</h3>
+  <ul>
+    <li>filtro conseguido con java + libreria math3: IIR_butterwoth_bandpass
+    </li>
+    <li>filtro conseguido con java: FIR_bandpass
+    </li>
+
+  </ul>
+
+  <h3>Planes para hoy</h3>
+  <ul>
+    <li>hacer el filtro en java</li>
+
+  </ul>
+<hr>
+
+  <h3>records</h3>
+  <h4>Android-Pronunciación</h4>
+
+  <h5>Queremos</h5>
+  <ol>
+    <li>run a series of fourier transforms along your data
+      (or generate a spectrogram)</li>
+    <li>find the part of your speech recording that has the lowest
+      average frequency response</li>
+    <li>Once you have that snapshot, you should subtract it from all
+      other points in your audio sample</li>
+  </ol>
+
+  <h5>Transformada en Java</h5>
+  <ol>
+    <li>
+      <a href="#"></a>
+      <br>The current data is actually known as time domain. But these numbers
+      are currently basically useless to us… if you read the article
+      <a href="https://laplacian.wordpress.com/2009/01/10/how-shazam-works/">*</a>
+      on how Shazam works you’ll read that they use a
+      <a href="https://en.wikipedia.org/wiki/Spectrum_analyzer">spectrum analysis</a>
+      instead of direct time domain data.
+      <br>Con la DFT transformamos estos datos al dominio de la frecuencia. Pero se pierde
+      la informacion respecto al tiempo. Sabremos la magnitud de la frecuencias pero no cuando se dan.
+      Sol: Una ventana deslizante.
+    </li>
+    <li>FFT
+      eficiente algoritmo que permite calcular la transformada de Fourier
+      discreta (DFT) y su inversa.
+      Fourier analysis converts a signal from its original domain
+      (often time or space) to a representation in the frequency domain and vice versa.
+      <br>The Fourier transform converts the time function into a sum of sine
+      waves of different frequencies, each of which represents a frequency component.
+      The 'spectrum' of frequency components is the frequency domain representation
+      of the signal. The inverse Fourier transform converts the frequency domain function
+      back to a time function. A spectrum analyzer is the tool commonly used to visualize
+      real-world signals in the frequency domain.
+      <br>un gráfico frecuencial muestra las componentes de la señal según la
+      frecuencia en la que oscilan dentro de un rango determinado.
+      Una representación frecuencial incluye también la información sobre el
+      desplazamiento de fase que debe ser aplicado a cada frecuencia para poder
+      recombinar las componentes frecuenciales y poder recuperar de nuevo la señal
+      original.
+    </li>
+    <li> SPECTRAL SUBSTRACTION
+      <br><a href="http://dsp.stackexchange.com/questions/7593/eliminate-signal-a-from-signal-b/7602#7602">1</a>
+      <br><a href="http://practicalcryptography.com/miscellaneous/machine-learning/tutorial-spectral-subraction/">2</a>
+      <br>Se debe restar la magnitud del ruido a la magnitud del sonido y
+      volver a construir el numero complejo.
+      <br>qué restar? the lowest average frequency response, la frecuencia media más baja.
+      <br><a href="http://stackoverflow.com/questions/5879851/how-can-the-noise-be-removed-from-a-recorded-sound-using-fft-in-matlab">nice pics</a>
+    </li>
+  </ol>
+
+
+
+
+
+<br>
+
+  <h4>Implementación</h4>
+  <p></p>
+  <ul>
+    <li>
+      Seguimos <a href="http://royvanrijn.com/blog/2010/06/creating-shazam-in-java/">*</a>
+      para el codigo, usamos FFT de Math3.
+      <br>Now we have a double array containing all chunks as Complex[].
+      This array contains data about all frequencies.
+    </li>
+    <li>
+
+    </li>
+
+
+  </ul>
+
+
+
+  <br> <!-- __________________________________________________________ -->
+  <h4>Writing</h4>
+  <p>
+    RECONOCIMIENTO DE IMAGENES
+    <br>- <a href="https://en.wikipedia.org/wiki/Optical_character_recognition">OCR</a>
+    <br>- <a href="http://softwarerecs.stackexchange.com/questions/16866/most-accurate-open-source-ocr-for-japanese">
+    recs - Most accurate open-source OCR for Japanese?</a>
+    <br>- Search: app practicing writing japanese characters
+  </p>
+</div>
+
+</body>
+</html>

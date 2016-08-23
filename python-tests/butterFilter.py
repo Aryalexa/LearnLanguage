@@ -11,6 +11,8 @@ def butter_bandpass(lowcut, highcut, fs, order=5):
 
 def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
     b, a = butter_bandpass(lowcut, highcut, fs, order=order)
+    print a
+    print b
     y = lfilter(b, a, data)
     return y
 
@@ -59,7 +61,7 @@ if __name__ == "__main__":
     plt.clf()
     plt.plot(t, x, label='Noisy signal')
     '''
-
+    '''
     # Get a noisy signal
     fin = open('newjinglebells')
     x = [line.rstrip('\n') for line in fin]
@@ -68,6 +70,11 @@ if __name__ == "__main__":
     #for ll in lines:
     #    print ll
     fin.close()
+    '''
+    x = np.linspace(1, 40, 40)
+    print x
+
+    # AUX
     T = 0.15
     nsamples = len(x)
     #print len(x)
@@ -75,14 +82,16 @@ if __name__ == "__main__":
     #print len(t)
 
     # Filter !
-    y = butter_bandpass_filter(x, lowcut, highcut, fs, order)
-
+    #y = butter_bandpass_filter(x, lowcut, highcut, fs, order)
+    y = butter_bandpass_filter(x,0.25,0.375,2,5)
+    print y
+    '''
     # Write result
     fout = open('newjinglebells2', 'w')
     for res in x:
         fout.write(str(res)+'\n')
     fout.close()
-
+    '''
     # PLOT part 1
     a = 0.02
     f0 = 1000.0 # Hz

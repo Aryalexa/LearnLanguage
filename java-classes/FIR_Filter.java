@@ -1,8 +1,5 @@
-package com.newventuresoftware.waveformdemo;
+package testingAudio;
 
-/**
- * Created by aryalexa on 1/8/16.
- */
 
 /**
  * FIR filter class, by Mike Perkins
@@ -120,9 +117,10 @@ package com.newventuresoftware.waveformdemo;
  * the filter taps.  The resulting filters have some ripple in the passband
  * due to the Gibbs phenomenon; the filters are linear phase.
  */
-public class Filter {
 
-    static final double M_PI = 3.1415972;
+public class FIR_Filter {
+
+	static final double M_PI = 3.1415972;
     static final int MAX_NUM_FILTER_TAPS = 1000;
 
     public enum FilterType {
@@ -130,7 +128,7 @@ public class Filter {
     }
 
     private FilterType m_filt_t;
-    private int m_num_taps;
+    private int m_num_taps;	//= order+1
     private int m_error_flag;
     private double m_Fs;
     private double m_Fx;
@@ -152,7 +150,7 @@ public class Filter {
      */
 
     /*For LPF and HPF*/
-    public Filter(FilterType filt_t, int num_taps, double Fs, double Fx){
+    public FIR_Filter(FilterType filt_t, int num_taps, double Fs, double Fx){
         m_error_flag = 0;
         m_filt_t = filt_t;
         m_num_taps = num_taps;
@@ -176,8 +174,15 @@ public class Filter {
         else ECODE(-5);
       }
 
-    /*For BPF only*/
-    public Filter(FilterType filt_t, int num_taps, double Fs, double Fl, double Fu) {
+    /**
+     * Filter for or BPF only
+     * @param filt_t
+     * @param num_taps
+     * @param Fs
+     * @param Fl
+     * @param Fu
+     */
+    public FIR_Filter(FilterType filt_t, int num_taps, double Fs, double Fl, double Fu) {
         m_error_flag = 0;
         m_filt_t = filt_t;
         m_num_taps = num_taps;
@@ -204,7 +209,10 @@ public class Filter {
         else ECODE(-16);
     }
 
-    void init(){
+    /**
+     * Reset filter
+     */
+    public void init(){
         int i;
 
         if( m_error_flag != 0 )
@@ -215,7 +223,12 @@ public class Filter {
 
     }
 
-    double do_sample (double data_sample){
+    /**
+     * filter a double from the data
+     * @param data_sample
+     * @return
+     */
+    public double do_sample (double data_sample){
         // esto se aplica a cada muestra que es un double, hay que recorrer todas las muestras!
         int i;
         double result;
@@ -234,19 +247,21 @@ public class Filter {
         return result;
     }
 
-    void designBPF(){
+    private void designBPF(){
         int n;
         double mm;
 
         for(n = 0; n < m_num_taps; n++){
             mm = n - (m_num_taps - 1.0) / 2.0;
-            if( mm == 0.0 ) m_taps[n] = (m_phi - m_lambda) / M_PI;
-            else m_taps[n] = (   Math.sin( mm * m_phi ) -
+            if( mm == 0.0 ) 
+            	m_taps[n] = (m_phi - m_lambda) / M_PI;
+            else 
+            	m_taps[n] = (   Math.sin( mm * m_phi ) -
                     Math.sin( mm * m_lambda )   ) / (mm * M_PI);
         }
     }
 
-    void designLPF(){
+    private void designLPF(){
         int n;
         double mm;
 
@@ -257,7 +272,7 @@ public class Filter {
         }
     }
 
-    void designHPF(){
+    private void designHPF(){
         int n;
         double mm;
 
@@ -268,7 +283,11 @@ public class Filter {
         }
     }
 
-    double[] get_taps(){
+    /**
+     * Ger coeffs
+     * @return
+     */
+    public double[] get_taps(){
         double taps[] = new double[m_num_taps];
         int i;
 
@@ -281,5 +300,28 @@ public class Filter {
         return taps;
     }
 
-    void ECODE(int x) {m_error_flag = x;}
+    private void ECODE(int x) {m_error_flag = x;}
+    
+    
+	public static void main(String[] args) {
+		int order = 5;
+		FIR_Filter fil = new FIR_Filter(FilterType.BPF, order+1, 2, 0.25, 0.375);
+		
+		double[] x = {1,2,3,4,5,6,7,8,9,10,11};
+		int size = x.length;
+		double[] y = new double[size];
+		
+		for(int i=0; i<size;i++){
+			y[i] = fil.do_sample(x[i]);
+		}
+		
+		
+		for(int k = 0; k<size; k++)
+	    	System.out.printf(k+" x is: "+x[k]+
+	    			"/ y is: "+y[k]+
+	    			// " // mult: "+ x[k]*y[k]+
+	    			"\n");
+
+	}
+
 }

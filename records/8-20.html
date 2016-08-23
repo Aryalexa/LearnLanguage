@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-    <title>Día 8/20</title>
+    <title>Día 8/20, 8/21</title>
 
     <meta charset="utf-8" />
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
@@ -16,16 +16,16 @@
 
 <body>
 <div class="all">
-  <h2 class="font-dosis green">Hoy: 8/20</h2>
+  <h2 class="font-dosis green">Hoy: 8/20, 8/21</h2>
 
   <h3>Día anterior</h3>
   <ul>
     <li>
       FILTRO: Averiguar sobre usar python y java en android. Tres/Cuatro caminos:
       <br>[X] usar jython: no!, no se puede
-      <br>[ ] usar sl4a
+      <br>[ ] usar sl4a -- confuso
       <br>[ ] usar sl4a y cle
-      <br>[ ] no usar python >> buscar el filtro en java
+      <br>[YES] no usar python >> buscar el filtro en java
     </li>
 
   </ul>
@@ -138,16 +138,24 @@
   <ul>
     <li>
       [ ] FILTRO - Hacer y probar (1)
+      <br>requiere Download Apache Commons Math para numeros complejos.
+      <br>- IIR_Filter(sampleRate, low, high) order=5
+      <br>hace lo mismo que : (order=5)
+      <br>- My python: butter_bandpass_filter(data, low, high, 2*sampleRate, 5)
+      <br>- python: butter(order, [low/sampleRate, high/sampleRate], btype='band')
+      <br>- Matlab : butter(order, [low/sampleRate , high/sampleRate])
+      <br>
       <br>[ ] FILTRO - Probar (2)
+      <br>FIR_Filter
     </li>
+    <li>
+      Queda probarlo con un raw de verdad! y ver cual de los dos es mejor! <b>TODO</b>
+    </li>
+
   </ul>
 
+<!-- __________________________________________________________ -->
 
-
-  <br> <!-- __________________________________________________________ -->
-  <p>
-
-  </p>
 </div>
 
 </body>
