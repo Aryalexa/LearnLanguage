@@ -1,0 +1,135 @@
+<!doctype html>
+<html>
+<head>
+    <title>Mem</title>
+
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link href='https://fonts.googleapis.com/css?family=Lato:400,300,700' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Dosis' rel='stylesheet' type='text/css'>
+
+</head>
+
+<body>
+<div class="all">
+  <h1>MEM</h1>
+
+  <h2 class="font-dosis green">Introducción</h2>
+  <p>
+    Motivación, objetivos, estructura
+    <br><b>DOC tfg</b>
+    <br>Se propone implementar una aplicación para dispositivos móviles para
+    el estudio autónomo del japonés. En concreto, se usará el micrófono para
+    la práctica de la pronunciación, una característica inédita en aplicaciones
+    no comerciales y que requerirá el tratamiento del audio.
+    <br>Esta aplicación requerirá que el estudiante:
+    <br>Elimine el ruido, para lo que deberá primero analizar la onda resultante
+    del audio, identificar y eliminar el ruido de fondo, eliminar las frecuencias
+    fuera del alcance humano para compresión y comparar el resultado final con una
+    "onda maestra” para asegurarse de la corrección del resultado.
+    <br>Compare la onda introducida con la de referencia. Para ello es necesario
+    crear un espectrograma y normalizarlo para identificar diferencias aceptables
+    en velocidad, por un lado, y en volumen, por otro.
+    <br>Realice la comparación final basándose en matrices. En principio
+    pretendemos utilizar la similitud coseno, pero puede resultar interesante
+    implementar otras variantes y comparar los resultados.
+  </p>
+
+  <h2 class="font-dosis green">Diseño e implementación</h2>
+
+  <h4>Captura del audio</h4>
+  <p>
+    Lo primero que haremos será capturar el sonido, lo que el usuario diga.
+    La señal de audio es una señal analógica que necesitamos que sea digital
+    para poder procesarla. Llamamos DSP al procesamiento digital de señales y
+    lo usaremos a lo largo del diseño de nuestra aplicación. Para representar
+    esta señal analógica en tiempo real se graba el audio en muestras discretas.
+    A este procedimiento se le llama muestreo o sampling. La velocidad con la
+    que se toman estas muestras es a lo que llamamos frecuencia o sample rate.
+    Se suele usar 44100 Hz para grabar sonidos, es decir, se cogen 44100 muestras
+    de la señal analógica cada segundo.
+    <br>
+    Obtendremos una grabación en formato MIC o PCM (modulación por impulsos codificados),
+    que es el procedimiento estándar para transformar sonido analógico en una
+    secuencia de bits (señal digital). En un flujo PCM, la amplitud de la señal
+    analógica es capturada regularmente en intervalos uniformes, cada muestra recogida
+    (un número real) es cuantificada al valor digital más cercano en un rango de valores
+    discretos o niveles. Los niveles son palabras de que pueden ser de 8-bit (256 niveles),
+    16-bit (65,536 niveles), 32-bit (4.3 mil millones de niveles) y más. Estos son los valores
+    más comunes pero la cuantificación puede hacerse con el número de niveles que
+    se desee, no solo potencias de dos. Después de esto, se codifican estos nuevos
+    valores obtenidos y se obtienen los ceros y unos.
+    <br>
+    Todo dispositivo android soporta la captura de audio con una canal a 44100
+    Hz en codificación PCM de 16-bit.
+    <br>
+    Para realizar nuestra captura de audio usaremos la clase de android <code>AudioRecord</code>
+    que gestiona las fuentes de audio para aplicaciones Java para la grabación de audio
+    a partir de las entradas de audio en el hardware des dispositivo. Para usar esta clase
+    debemos especificar una fuente de audio, una configuración de canales, una codificación
+    o formato en el que queremos recibir el audio
+    y el tamaño en bytes del buffer que usaremos para almacenar los datos capturados.
+    Es decir, poner al micrófono como la fuente de audio, esto se consigue con
+    el valor <code>MediaRecorder.AudioSource.DEFAULT</code>, establecer que solo
+    queremos un canal, queremos la codificación PCM de 16-bit y en cuanto al
+    tamaño en bytes del buffer, que representa al número en bytes que podemos coger
+    cada vez, será el tamaño que nos diga el método <code>getMinBufferSize()</code>
+    de la clase <code>AudioRecord</code>.
+
+    <pre>AudioRecord recorder = new AudioRecord(MediaRecorder.AudioSource.DEFAULT,
+                  SAMPLE_RATE,
+                  AudioFormat.CHANNEL_IN_MONO,
+                  AudioFormat.ENCODING_PCM_16BIT,
+                  bufferSize);</pre>
+
+    Ya tenemos preparado el capturador, podemos llamar a su método <code>read</code>
+    y llenar nuestro buffer de bytes con los datos del sonido. Este buffer será un array de valores,
+    en este caso de bytes. Si el buffer es de x bytes, el capturador nos dará x/2 muestras
+    (al rededor de x/(44.1*2) ms) cada vez.
+    <br>
+    Pero como cualquier proceso de entrada y salida, debe realizarse en su
+    propio thread. En la ejecución del thread estará todo el proceso de la captura,
+    es decir, un bucle que vaya leyendo los bytes recibidos y los guarde para ser tratados.
+    Este bucle parará cuando se lo especifiquemos al thread.
+    <br>
+
+
+
+
+    <br>
+    <br>
+    <br><a href="http://www.newventuresoftware.com/blog/record-play-and-visualize-raw-audio-data-in-android">
+      fuente recording 1</a>
+
+    <h4>filtrar</h4>
+    <br>
+    <h4>quitar sonido de fondo con FFT</h4>
+    <br>
+  </p>
+
+  <h2 class="font-dosis green">jj</h2>
+
+  <h2 class="font-dosis green">Conclusiones</h2>
+
+  <h2 class="font-dosis green">Bibiografía</h2>
+  <h3>captura de audio</h3>
+  <ol>
+    <li>Wikipedia:
+      Modulación por impulsos codificados, Cuantificación digital
+    </li>
+    <li>
+      <a href="https://developer.android.com/reference/android/media/AudioFormat.html">AudioFormat</a> class
+    </li>
+    <li>
+      <a href="https://developer.android.com/reference/android/media/AudioRecord.html">AudioRecord</a> class
+    </li>
+  </ol>
+
+</div>
+
+</body>
+</html>

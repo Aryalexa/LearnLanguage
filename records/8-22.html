@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-    <title>Día 8/20</title>
+    <title>Día 8/22, 8/23</title>
 
     <meta charset="utf-8" />
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
@@ -16,7 +16,7 @@
 
 <body>
 <div class="all">
-  <h2 class="font-dosis green">Hoy: 8/20</h2>
+  <h2 class="font-dosis green">Hoy: 8/22, 8/23</h2>
 
   <h3>Día anterior</h3>
   <ul>
@@ -61,7 +61,7 @@
       la informacion respecto al tiempo. Sabremos la magnitud de la frecuencias pero no cuando se dan.
       Sol: Una ventana deslizante.
     </li>
-    <li>FFT
+    <li><b>FFT</b>
       eficiente algoritmo que permite calcular la transformada de Fourier
       discreta (DFT) y su inversa.
       Fourier analysis converts a signal from its original domain
@@ -79,13 +79,29 @@
       recombinar las componentes frecuenciales y poder recuperar de nuevo la señal
       original.
     </li>
-    <li> SPECTRAL SUBSTRACTION
+    <li> <b>SPECTRAL SUBSTRACTION</b>
       <br><a href="http://dsp.stackexchange.com/questions/7593/eliminate-signal-a-from-signal-b/7602#7602">1</a>
       <br><a href="http://practicalcryptography.com/miscellaneous/machine-learning/tutorial-spectral-subraction/">2</a>
+      <br><a href="http://dsp.stackexchange.com/questions/9054/removing-noise-from-audio-using-fourier-transform-in-matlab">3</a>
+      ayuda a ver el umbral, pero hace zero en lugar de restar.
       <br>Se debe restar la magnitud del ruido a la magnitud del sonido y
       volver a construir el numero complejo.
       <br>qué restar? the lowest average frequency response, la frecuencia media más baja.
-      <br><a href="http://stackoverflow.com/questions/5879851/how-can-the-noise-be-removed-from-a-recorded-sound-using-fft-in-matlab">nice pics</a>
+      <br>Hemos usado magnitude spectral subtraction.
+      Another closely related concept is power spectral subtraction.
+      <br><a href="http://stackoverflow.com/questions/5879851/how-can-the-noise-be-removed-from-a-recorded-sound-using-fft-in-matlab">
+        nice pics</a>,
+        <a href="http://stackoverflow.com/questions/10176604/background-noise-removal-from-audio-signals-using-fft-python">
+        interesting</a>
+    </li>
+    <li><b>OpenCV</b> for blob detection
+      <br>- <a href="http://opencv.org/platforms/android.html">OpenCV - Android</a>
+      <br>- Steps to add Open CV in your project as library
+      <a href="http://stackoverflow.com/questions/17767557/how-to-use-opencv-in-android-studio-using-gradle-build-tool">1</a>
+      <a href="http://stackoverflow.com/questions/27406303/opencv-in-android-studio">2</a> on Android Studio.
+      <br>- <a href="https://github.com/opencv/opencv/blob/master/samples/android/color-blob-detection/src/org/opencv/samples/colorblobdetect/ColorBlobDetector.java">
+      Example on GitHub - ColorBlobDetector.java</a>, se necesita el permiso de cámara (<a href="http://stackoverflow.com/questions/20666366/it-seems-that-your-device-does-not-support-cameraor-it-is-locked"></a>)
+      <br>- Descargado opencv-3.1.0.zip
     </li>
   </ol>
 
@@ -105,7 +121,9 @@
       This array contains data about all frequencies.
     </li>
     <li>
-
+      Para la substraccion espectral se han seguido los links de arriba y se ha
+      hecho una substraccion espectral de magnitudes.
+      <br>Se obtiene otro array doble Complex[][] con el expectro 'limpio'.
     </li>
 
 
