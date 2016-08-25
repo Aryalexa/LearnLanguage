@@ -57,20 +57,22 @@ public class PlaybackActivity extends AppCompatActivity {
             //mPlaybackView.setSampleRate(PlaybackThread.SAMPLE_RATE);
             //mPlaybackView.setSamples(samples);
 
-            play_btn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (!mPlaybackThread.playing()) {
-                        mPlaybackThread.startPlayback();
-                        play_btn.setText("STOP");
-                        //playFab.setImageResource(android.R.drawable.ic_media_pause);
-                    } else {
-                        mPlaybackThread.stopPlayback();
-                        play_btn.setText("PLAY");
-                        //playFab.setImageResource(android.R.drawable.ic_media_play);
+            if (play_btn != null) {
+                play_btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (!mPlaybackThread.playing()) {
+                            mPlaybackThread.startPlayback();
+                            play_btn.setText("STOP");
+                            //playFab.setImageResource(android.R.drawable.ic_media_pause);
+                        } else {
+                            mPlaybackThread.stopPlayback();
+                            play_btn.setText("PLAY");
+                            //playFab.setImageResource(android.R.drawable.ic_media_play);
+                        }
                     }
-                }
-            });
+                });
+            }
         }
     }
 

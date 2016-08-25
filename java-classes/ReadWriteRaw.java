@@ -8,16 +8,16 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
-//import java.nio.ByteBuffer;
-//import java.nio.ByteOrder;
-//import java.nio.FloatBuffer;
 import java.util.Scanner;
 import java.util.ArrayList;
 
 import org.apache.commons.io.IOUtils;
 
-//import org.apache.commons.io.IOUtils;
-
+/**
+ * Agunos métodos necesitan org.apache.commons.io.jar
+ * Se puede prescindir de esos métodos, hay otros que los pueden suplir.
+ * 
+ */
 
 
 public class ReadWriteRaw {
@@ -217,13 +217,14 @@ public class ReadWriteRaw {
 	 * @return
 	 * @throws IOException
 	 */
-	public static ArrayList<Double> readDoublesfromRaw(String inputName) throws IOException{
-		FileInputStream is = new FileInputStream(inputName);
-		DataInputStream dis = new DataInputStream(is);
-		
+	public static ArrayList<Double> readDoublesfromRaw(String inputName) {
 		ArrayList<Double> fbuffer = new ArrayList<Double>();
 		double d;
+		
 		try {
+			FileInputStream is = new FileInputStream(inputName);
+			DataInputStream dis = new DataInputStream(is);
+			
 			while(dis.available()>0)
 			{
 			   d = dis.readDouble(); //read 8 bytes as double 
@@ -231,12 +232,12 @@ public class ReadWriteRaw {
 			   //System.out.print(f + " ");
 			   fbuffer.add(d);
 			}
+			dis.close();
+			is.close();
 		} catch (IOException e) {
 			//nothing happens, there are 1,2.. 7 bytes we are going to ignore
 			//e.printStackTrace();
 		}
-		dis.close();
-		is.close();
 		
 		return fbuffer;
 	}
@@ -262,7 +263,6 @@ public class ReadWriteRaw {
 		}
 		w.close();
 	}
-	
 	
 	/**
 	 * PLAIN >> ArrayList<Float>
@@ -344,7 +344,6 @@ public class ReadWriteRaw {
 		}
 		
 	}
-
 	
 	public static void test1(){
 		/*String inputRaw = "jinglebells.raw";

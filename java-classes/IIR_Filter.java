@@ -6,6 +6,9 @@ import org.apache.commons.math3.complex.Complex;
 * basado en butter de MATLAB
 * 
 * PD: solo hasta orden 5!!
+* 
+* 
+* Needs: commons-math3-3.6.1.jar as library
 */
 
 public class IIR_Filter {
