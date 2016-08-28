@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
 public class RecordingThread {
@@ -128,7 +127,7 @@ public class RecordingThread {
 
         //OutputStream out = new ByteArrayOutputStream(); //1
         //String filename = "je";//getTempFilename(); //2
-        //FileOutputStream os = null; //2
+        //FileOutputStream os = null;
         String audioFileName = AUDIO_RECORDER_TEMP_FILE;//3
         FileOutputStream fos = null;
 
@@ -148,7 +147,8 @@ public class RecordingThread {
         }
         //////////////////////////////////////////////////////////////////
 
-        byte[] byteBuffer = new byte[bufferSize];
+        //short[] audioBuffer = new short[bufferSize / 2];
+        byte[] audioBufferOfBytes = new byte[bufferSize];
 
         record.startRecording();
         Log.d(LOG_TAG, "Start recording");
@@ -156,28 +156,41 @@ public class RecordingThread {
         long shortsRead = 0;
         try {
             while (mShouldContinue) {
-                int numberOfBytes = record.read(byteBuffer, 0, bufferSize);
+                int numberOfBytes = record.read(audioBufferOfBytes, 0, bufferSize);
                 shortsRead += numberOfBytes;
 
-                short[] shortBuffer = convertByteArrayToShortArray(byteBuffer);
-                //ShortBuffer sb = ByteBuffer.wrap(byteBuffer).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer();
-                //short[] shortBuffer = new short[sb.limit()];
-                //sb.get(shortBuffer);
-                float[] floatBuffer = convertByteArrayToFloatArray(byteBuffer);
-                Log.d(LOG_TAG, floatBuffer.toString());
+                // from bytes to shorts ( byte[] audioBufferOfBytes; )
+                ShortBuffer sb = ByteBuffer.wrap(audioBufferOfBytes).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer();
+                short[] audioBuffer = new short[sb.limit()];
+                sb.get(audioBuffer);
+                // notify
+                if (WAVEFORM)// Notify waveform
+                    mListener.onAudioDataReceived(audioBuffer);
+
+                if (SAVE && null != fos && AudioRecord.ERROR_INVALID_OPERATION != numberOfBytes){// save data //NEW
+                    fos.write(audioBufferOfBytes);//3
+                }
+                /*
+                // read
+                int numberOfShort = record.read(audioBuffer, 0, audioBuffer.length);
+                shortsRead += numberOfShort;
 
                 // notify
-                if (WAVEFORM) {// Notify waveform
-                    mListener.onAudioDataReceived(shortBuffer);
+                if (WAVEFORM)// Notify waveform
+                    mListener.onAudioDataReceived(audioBuffer);
 
+                // save
+                if (SAVE && null != fos && AudioRecord.ERROR_INVALID_OPERATION != numberOfShort){// save data //NEW
+                    audioBufferOfBytes = castShort2Byte(audioBuffer);
+                    //out.write(audioBufferOfBytes, 0, numberOfShort*2);//1
+                    //os.write(audioBufferOfBytes);//2
+                    fos.write(audioBufferOfBytes);//3
                 }
-                if (SAVE && null != fos && AudioRecord.ERROR_INVALID_OPERATION != numberOfBytes){// save data //NEW
-                    fos.write(byteBuffer);//3
-
-                }
-
+                */
             }
             if (SAVE){
+                //out.close();//1
+                //os.close();//2
                 Log.v(LOG_TAG, "SAMPLE: "+fos.toString());
                 fos.close();//3
             }
@@ -238,18 +251,5 @@ public class RecordingThread {
             tempFile.delete();
 
         return (file.getAbsolutePath() + "/" + AUDIO_RECORDER_TEMP_FILE);
-    }
-
-    public float[] convertByteArrayToFloatArray(byte[] b) {
-        FloatBuffer fb = ByteBuffer.wrap(b).order(ByteOrder.LITTLE_ENDIAN).asFloatBuffer();
-        float[] f = new float[fb.limit()];
-        fb.get(f);
-        return f;
-    }
-    public short[] convertByteArrayToShortArray(byte[] b){
-        ShortBuffer sb = ByteBuffer.wrap(b).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer();
-        short[] s = new short[sb.limit()];
-        sb.get(s);
-        return s;
     }
 }
