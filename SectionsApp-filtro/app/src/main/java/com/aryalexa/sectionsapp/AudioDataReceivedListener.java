@@ -16,4 +16,5 @@ package com.aryalexa.sectionsapp;
 
 public interface AudioDataReceivedListener {
     void onAudioDataReceived(short[] data);
+    void onFinished();
 }

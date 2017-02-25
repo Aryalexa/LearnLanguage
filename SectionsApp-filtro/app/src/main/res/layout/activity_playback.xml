@@ -10,12 +10,65 @@
     tools:context="com.aryalexa.sectionsapp.PlaybackActivity"
     android:background="#f7dfdf">
 
+
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="JINGLE BELLS"
+        android:text="PLAY"
         android:id="@+id/btn_play"
+        android:layout_marginTop="65dp"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="111dp" />
+        android:layout_centerHorizontal="true" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Jingle Bells"
+        android:id="@+id/textView1"
+        android:layout_alignTop="@id/btn_play"
+        android:layout_toLeftOf="@+id/btn_play"
+        android:layout_toStartOf="@+id/btn_play" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="PLAY"
+        android:id="@+id/btn_play_btt"
+        android:layout_below="@+id/btn_play"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="JB Butterworth"
+        android:id="@+id/textView2"
+        android:layout_alignTop="@+id/btn_play_btt"
+        android:layout_toLeftOf="@+id/btn_play_btt"
+        android:layout_toStartOf="@+id/btn_play_btt" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="PLAY"
+        android:id="@+id/btn_play_fft"
+        android:layout_below="@+id/btn_play_btt"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="JB FFT"
+        android:id="@+id/textView3"
+        android:layout_alignTop="@+id/btn_play_fft"
+        android:layout_toLeftOf="@+id/btn_play_fft"
+        android:layout_toStartOf="@+id/btn_play_fft" />
+
+
+
+
+
+
+
+
+
 </RelativeLayout>

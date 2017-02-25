@@ -32,6 +32,7 @@ public class MyAppActivity extends Activity {
     private WaveformView mRealtimeWaveformView;
     private RecordingThread mRecordingThread;
     private PlaybackThread mPlaybackThread;
+    private boolean recordedOnce = false;
 
     private static final int REQUEST_RECORD_AUDIO = 13;
 
@@ -69,18 +70,25 @@ public class MyAppActivity extends Activity {
         btn_p4.setEnabled(false);
 
         recordingPart();
-        filteringPart(); //TODO mirar cuando llamar a esto!
+        //filteringPart(); //TODO mirar cuando llamar a esto!
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+
         mRecordingThread.stopRecording();
+        mPlaybackThread.stopPlayback();
     }
 
     /******* F I L T E R I N G *********/
     private void filteringPart() {
         ArrayList<Double> raw_data = ReadWriteRAW.readDoublesfromRaw(this.audioFileName);
+
+        if(raw_data==null){
+            Log.e(LOG_TAG, "no ha leido nada!!!");
+            return;
+        }
 
         ArrayList<Double> filter_data = new ArrayList<Double>();
         if(true){ // IIR_Filter - butterworth filter
@@ -165,6 +173,10 @@ public class MyAppActivity extends Activity {
             @Override
             public void onAudioDataReceived(short[] data) {
                 mRealtimeWaveformView.setSamples(data);
+
+            }
+            public void onFinished(){
+                filteringPart(); // TODO mirar cuando llamar a esto!
             }
         },true, getApplication());
 
@@ -187,12 +199,16 @@ public class MyAppActivity extends Activity {
             public void onClick(View view) {
                 if (!mRecordingThread.recording()) {
                     btn_rec.setText("STOP");
+
                     //setText("Stop recording");
                     startAudioRecordingSafe();
                     Log.d(LOG_TAG, "Record in "+mRecordingThread.AUDIO_RECORDER_TEMP_FILE);// internal storage
+
+
                 } else {
                     btn_rec.setText("REC");
                     mRecordingThread.stopRecording();
+
                 }
             }
         });
@@ -236,18 +252,18 @@ public class MyAppActivity extends Activity {
 
     /******** P L A Y I N G *******/
 
-    public void playingPart(short[] samples, int btn_id, final String btn_name){
+    public void playingPart(final short[] samples, int btn_id, final String btn_name){
         // ** PLAY **
 
         if (samples != null) {
             final Button btn = (Button) findViewById(btn_id);
 
-            mPlaybackThread = new PlaybackThread(samples);//TODO fix this! se sobreescribe!
 
             btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    Log.d(LOG_TAG, " on click !---------------------------!");
+                    mPlaybackThread = new PlaybackThread(samples);//TODO fix this! se sobreescribe!
                     if (!mPlaybackThread.playing()) {
                         Log.d(LOG_TAG, "pressed PLAY");
                         btn.setText("-");

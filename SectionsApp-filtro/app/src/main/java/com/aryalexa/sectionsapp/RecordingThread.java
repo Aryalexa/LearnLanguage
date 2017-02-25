@@ -193,7 +193,9 @@ public class RecordingThread {
                 //os.close();//2
                 Log.v(LOG_TAG, "SAMPLE: "+fos.toString());
                 fos.close();//3
+                mListener.onFinished();
             }
+
 
         } catch (IOException e) {
             System.err.println("I/O problems: " + e);

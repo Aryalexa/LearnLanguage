@@ -11,8 +11,8 @@ def butter_bandpass(lowcut, highcut, fs, order=5):
 
 def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
     b, a = butter_bandpass(lowcut, highcut, fs, order=order)
-    print a
-    print b
+    # print 'a', a
+    # print "b", b
     y = lfilter(b, a, data)
     return y
 
@@ -30,24 +30,11 @@ if __name__ == "__main__":
     highcut = 4000.0
     order = 6 # 6 3 9
 
-    # Plot the frequency response for a few different orders.
-    '''plt.figure(1)
-    plt.clf()
-    for order in [3, 6, 9]:
-        b, a = butter_bandpass(lowcut, highcut, fs, order=order)
-        w, h = freqz(b, a, worN=2000)
-        plt.plot((fs * 0.5 / np.pi) * w, abs(h), label="order = %d" % order)
-
-    plt.plot([0, 0.5 * fs], [np.sqrt(0.5), np.sqrt(0.5)],
-             '--', label='sqrt(0.5)')
-    plt.xlabel('Frequency (Hz)')
-    plt.ylabel('Gain')
-    plt.grid(True)
-    plt.legend(loc='best')
-    '''
 
     # Create a noisy signal.
-    '''T = 0.05
+    '''
+    # 1 
+    T = 0.05
     nsamples = T * fs
     t = np.linspace(0, T, nsamples, endpoint=False)
     a = 0.02
@@ -62,44 +49,55 @@ if __name__ == "__main__":
     plt.plot(t, x, label='Noisy signal')
     '''
     '''
+    # 2
+    x = np.linspace(1, 40, 40)
+    print x
+    '''
+
+    # names
+    name = 'itadakimasu_A' # prueba001
+    inputname = 'new'+name
+    outputname = 'new'+name+'2'
     # Get a noisy signal
-    fin = open('newjinglebells')
+    fin = open(inputname)
     x = [line.rstrip('\n') for line in fin]
     x = destringifyList(x)
     #print x
     #for ll in lines:
     #    print ll
     fin.close()
-    '''
-    x = np.linspace(1, 40, 40)
-    print x
-
+    
     # AUX
     T = 0.15
     nsamples = len(x)
-    #print len(x)
+    print 'len muestras: ', len(x)
+    print 'max muestras: ', max(x)
     t = np.linspace(0, T, nsamples)#, endpoint=False)
     #print len(t)
 
+    ''' F I L T E R '''
     # Filter !
-    #y = butter_bandpass_filter(x, lowcut, highcut, fs, order)
-    y = butter_bandpass_filter(x,0.25,0.375,2,5)
-    print y
-    '''
+    lowcut = 1000 #0.25
+    highcut = 20000 #0.375
+    order = 5
+    # fs=2
+    y = butter_bandpass_filter(x, lowcut, highcut, fs, order)
+    #print y
+    
     # Write result
-    fout = open('newjinglebells2', 'w')
+    fout = open(outputname, 'w')
     for res in x:
         fout.write(str(res)+'\n')
     fout.close()
-    '''
-    # PLOT part 1
+    
+
+    ''' P L O T I N G '''
+    # PLOT 
     a = 0.02
     f0 = 1000.0 # Hz
-    plt.figure(2)
+    plt.figure(1)
     plt.clf()
     plt.plot(t, x, label='Noisy signal')
-
-    # PLOT part 2
     plt.plot(t, y, label='Filtered signal (%g Hz)' % f0)
     plt.xlabel('time (seconds)')
     plt.hlines([-a, a], 0, T, linestyles='--')

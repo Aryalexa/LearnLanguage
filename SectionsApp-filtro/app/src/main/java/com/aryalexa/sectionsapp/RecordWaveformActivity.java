@@ -40,6 +40,7 @@ public class RecordWaveformActivity extends Activity {
             public void onAudioDataReceived(short[] data) {
                 mRealtimeWaveformView.setSamples(data);
             }
+            public void onFinished(){}
         });
 
         //final Button rec_btn = (Button) findViewById(R.id.btn_rec);
