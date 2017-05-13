@@ -7,20 +7,24 @@ import org.apache.commons.math3.complex.Complex;
 
 public class Main {
 
+	// double - trabaj con doubles!! al leer de los archivos de audio
 	static String fileName = "itadakimasuA";//prueba001;itadakimasuA
 	static String rawFileName = fileName + ".raw";
+	static String wavFileName = fileName + ".wav";
+
 	static ArrayList<Double> raw_data;
-	static ArrayList<Double> filter_data;
 	
-	static String filtered1Name = fileName + "-filter1.raw";
 	static IIR_Filter iir_fil;
-	static ArrayList<Double> filter1_data;
-	static String filtered2Name = fileName + "-filter2.raw";
 	static FIR_Filter fir_fil;
+	static String filtered1Name = fileName + "-1filterA.raw";
+	static String filtered2Name = fileName + "-2filterB.raw";
+	static ArrayList<Double> filter1_data;
 	static ArrayList<Double> filter2_data;
+	static ArrayList<Double> filter_data;
+
 	
-	static String transformedName = fileName + "-fft_3.raw";
-	static String susbstractedName = fileName + "-subs_4.raw";
+	static String transformedName = fileName + "-3fft.raw";
+	static String susbstractedName = fileName + "-4subsnoise.raw";
 	
 	static Complex[][] fft_data ;
 	
@@ -33,20 +37,38 @@ public class Main {
 		filter1();
 		filter2();
         
-        fastFurierTransform();
-        noiseSubstraction();
+        //fastFurierTransform();
+        //noiseSubstraction();
         
     }
+	
 	static void readRaw(){
+		// ---------------------------------------
+		// read doubles
 		raw_data = ReadWriteRaw.readDoublesfromRaw(rawFileName);
-
         if (raw_data == null){
-            System.out.println("no ha leido nada!!!");
+            System.out.println("raw - no ha leido nada!!!");
             return;
         }
-        System.out.println("lectura hecha .."+raw_data.size()+" samples." );
+        
+        // save audio file to verify
+        System.out.println("raw - lectura hecha .."+raw_data.size()+" samples." );
         try {
-			ReadWriteRaw.writeDoublesToRaw(raw_data, "lectura.raw");
+			ReadWriteRaw.writeDoublesToRaw(raw_data, "out1_"+rawFileName);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        // --------------------------------------
+        raw_data=null;
+        raw_data = ReadWriteRaw.readDoublesfromWav(wavFileName);
+        if (raw_data == null){
+            System.out.println("wav - no ha leido nada!!!");
+            return;
+        }
+        System.out.println("wav - lectura hecha .."+raw_data.size()+" samples." );
+        try {
+			ReadWriteRaw.writeDoublesToRaw(raw_data, "out2_"+rawFileName);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
