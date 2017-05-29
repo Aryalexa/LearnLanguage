@@ -10,10 +10,12 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 import java.util.ArrayList;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.math3.complex.Complex;
 
 /**
  * Agunos métodos necesitan org.apache.commons.io.jar
@@ -129,14 +131,14 @@ public class ReadWriteRaw {
 			is.close();
 		} catch (IOException e) {
 			//nothing happens
-			//e.printStackTrace();
+			e.printStackTrace();
 		}
 		
 		return sbuffer;
 	}
 	
 	/**
-	 * RAW -> ArrayList<Short>
+	 * WAV -> ArrayList<Short>
 	 * @param inputName
 	 * @return
 	 * @throws IOException
@@ -169,7 +171,7 @@ public class ReadWriteRaw {
 			is.close();
 		} catch (IOException e) {
 			//nothing happens
-			//e.printStackTrace();
+			e.printStackTrace();
 		}
 		
 		return sbuffer;
@@ -213,7 +215,20 @@ public class ReadWriteRaw {
 		dos.close();
 		os.close();
 	}
+	// I N T ------------------------------------------------------------------
 	
+	public static void writeIntToPlain(int[] data, String outputName) {
+		PrintWriter w;
+		try {
+			w = new PrintWriter(outputName);
+			for (int i=0; i<data.length; i++){
+				w.print(data[i]+"\n");
+			}
+			w.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
 	
 	// F L O A T ------------------------------------------------------------------
 	/**
@@ -241,7 +256,7 @@ public class ReadWriteRaw {
 			is.close();
 		} catch (IOException e) {
 			//nothing happens, there are 1,2 or 3 bytes we are going to ignore
-			//e.printStackTrace();
+			e.printStackTrace();
 		}
 		
 		float[] ff = new float[fbuffer.size()];
@@ -385,6 +400,7 @@ public class ReadWriteRaw {
 	 */
 	public static ArrayList<Double> readDoublesfromRaw(String inputName) {
 		ArrayList<Double> dbuffer = new ArrayList<Double>();
+		short s;
 		double d;
 		
 		try {
@@ -393,16 +409,16 @@ public class ReadWriteRaw {
 			
 			while(dis.available()>0)
 			{
-			   d = dis.readDouble(); //read 8 bytes as double 
-			   // fallara muy probablemente si no es 8x
-			   //System.out.print(f + " ");
+				s = dis.readShort();
+				s = swapShortEndian(s);
+				
+				d = s/32768.0;
 			   dbuffer.add(d);
 			}
 			dis.close();
 			is.close();
 		} catch (IOException e) {
-			//nothing happens, there are 1,2.. 7 bytes we are going to ignore
-			//e.printStackTrace();
+			e.printStackTrace();
 		}
 		if (dbuffer.isEmpty()) {
 			System.out.println("lectura vacia");
@@ -419,27 +435,31 @@ public class ReadWriteRaw {
 	 */
 	public static ArrayList<Double> readDoublesfromWav(String inputName) {
 		ArrayList<Double> dbuffer = new ArrayList<Double>();
+		
+		short s,s1;
 		double d;
 		
 		try {
 			FileInputStream is = new FileInputStream(inputName);
 			DataInputStream dis = new DataInputStream(is);
 			
-			for(int i=0; i<11 && dis.available()>0; i++){ //44 bytes = 11 * 4 bytes = 11 floats
-				dis.readFloat();
+			for(int i=0; i<22 && dis.available()>0; i++){ //44 bytes = 22 * 2 bytes = 22 shorts
+				dis.readShort();
 			}
+			int count=0;
 			while(dis.available()>0)
-			{
-			   d = dis.readDouble(); //read 8 bytes as double 
-			   // fallara muy probablemente si no es 8x
-			   //System.out.print(f + " ");
+			{	//read 2 bytes (double(8bytes))
+				s1 = dis.readShort();
+				s = swapShortEndian(s1);
+				
+				d = s/32768.0;
+			   //if(count<100) { System.out.println(count+" lectura:  "+s1+"\t"+s+"  \t"+d); count++;}
 			   dbuffer.add(d);
 			}
 			dis.close();
 			is.close();
 		} catch (IOException e) {
-			//nothing happens, there are 1,2.. 7 bytes we are going to ignore
-			//e.printStackTrace();
+			e.printStackTrace();
 		}
 		if (dbuffer.isEmpty()) {
 			System.out.println("lectura vacia");
@@ -454,24 +474,60 @@ public class ReadWriteRaw {
 	 * @param outputName
 	 * @throws IOException
 	 */
-	public static void writeDoublesToRaw(ArrayList<Double> dbuffer, String outputName) throws IOException{
-		FileOutputStream os = new FileOutputStream(outputName); 
-		DataOutputStream dos = new DataOutputStream(os);
-		
-		for (int i=0; i<dbuffer.size(); i++){
-			dos.writeDouble(dbuffer.get(i));
-			//4-byte quantity, high byte first.
-		}
-		dos.close();
-		os.close();
+	public static void writeDoublesToRaw(ArrayList<Double> dbuffer, String outputName){// throws IOException{
+		FileOutputStream os;
+		try {
+			os = new FileOutputStream(outputName);
+			DataOutputStream dos = new DataOutputStream(os);
+			
+			for (int i=0; i<dbuffer.size(); i++){
+				dos.writeShort(swapShortEndian((short) (dbuffer.get(i)*32768)));
+				//2-byte quantity, high byte first.
+			}
+			dos.close();
+			os.close();
+		} catch ( IOException e) {
+			e.printStackTrace();
+		} 
 	}
 
 	
 	
+	public static void writeComplexToPlain(Complex[][] data, String outputName) throws FileNotFoundException{
+		PrintWriter w = new PrintWriter(outputName);
+		
+		for (int i=0; i<data.length; i++){
+			for (int j=0; j<data[i].length; j++){
+				w.print(data[i][j]+" ");
+			}
+			w.print("\n");
+		}
+		w.close();
+	}
+	
 	/* ***** * ***** * ***** * ***** * ***** */
 	
 	public static void main(String[] args) {
-		String name 		= "itadakimasu_A"; //"prueba001";
+		
+		test_swap();
+		
+		
+	}
+	
+	public static void test1(){
+		//jinglebells
+		String name = "jinglebells";
+		String inputRaw = name+".raw";
+		String outputPlain = "new"+name;
+		//fromRaw2Plain(inputRaw, outputPlain);
+		
+		String inputPlain = "new"+name;
+		String outputRaw = name+"2.raw";
+		//fromPlain2Raw_v2(inputPlain, outputRaw);
+	}
+	
+	public static void test2(){
+		String name 		= "itadakimasuA"; //"prueba001";
 		String inputRaw 	= 		name+".raw";
 		String outputPlain 	= "new"+name;
 		String inputPlain 	= "new"+name+"2";
@@ -514,17 +570,31 @@ public class ReadWriteRaw {
 		System.out.println("hecho");
 	}
 	
-	public static void test1(){
-		//jinglebells
-		String name = "jinglebells";
-		String inputRaw = name+".raw";
-		String outputPlain = "new"+name;
-		//fromRaw2Plain(inputRaw, outputPlain);
+	public static void test_swap(){
+		//9eff
+		short s1,s2,s3,s4;
+		double d;
 		
-		String inputPlain = "new"+name;
-		String outputRaw = name+"2.raw";
-		//fromPlain2Raw_v2(inputPlain, outputRaw);
+		s1 = -2;
+		s2 = swapShortEndian(s1);
+		d = s2/32768.0;
+		s3 = (short) (d*32768);
+		s4 = swapShortEndian(s3);
 		
+		System.out.println("Test Leer shorts y swap:\n"
+				+s1+"("+Integer.toHexString(s1&0xffff)+")"+"="
+				+s4+"("+Integer.toHexString(s4&0xffff)+")"+"\t"
+				+d+"\t"
+				+s2+"("+Integer.toHexString(s2&0xffff)+")"+"="
+				+s3+"("+Integer.toHexString(s3&0xffff)+")"+""
+				);
+		
+	}
+	
+	
+	
+	public static short swapShortEndian(short s){
+		return (short) ((s&0xff)<<8 | (s>>8)&0x00ff) ;
 	}
 	
 	/*

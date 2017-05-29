@@ -18,15 +18,19 @@ public class Main {
 	static FIR_Filter fir_fil;
 	static String filtered1Name = fileName + "-1filterA.raw";
 	static String filtered2Name = fileName + "-2filterB.raw";
+	static String filtered3Name = fileName + "-3filterC.raw";
 	static ArrayList<Double> filter1_data;
 	static ArrayList<Double> filter2_data;
+	static ArrayList<Double> filter3_data;
 	static ArrayList<Double> filter_data;
 
 	
-	static String transformedName = fileName + "-3fft.raw";
-	static String susbstractedName = fileName + "-4subsnoise.raw";
-	
+	static String transformedName = fileName + "-4fft.raw";
+	static String transformedValName = fileName + "-4fft-values";
+	static String susbstractedName = fileName + "-5subsnoise.raw";
 	static Complex[][] fft_data ;
+	
+	static boolean DEBUG=true;
 	
 	public static void main(String[] args) {
 		
@@ -34,52 +38,33 @@ public class Main {
 		 
 		filter_data = new ArrayList<Double>();
         
-		filter1();
-		filter2();
-        
-        //fastFurierTransform();
-        //noiseSubstraction();
-        
+		//filter1(); //FIX this TODO
+		//filter2();
+		filter3();
+        fastFurierTransform();
+        noiseSubstraction();
+		
     }
 	
 	static void readRaw(){
-		// ---------------------------------------
-		// read doubles
-		raw_data = ReadWriteRaw.readDoublesfromRaw(rawFileName);
-        if (raw_data == null){
-            System.out.println("raw - no ha leido nada!!!");
-            return;
-        }
-        
-        // save audio file to verify
-        System.out.println("raw - lectura hecha .."+raw_data.size()+" samples." );
-        try {
-			ReadWriteRaw.writeDoublesToRaw(raw_data, "out1_"+rawFileName);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        // --------------------------------------
-        raw_data=null;
+		// read 
         raw_data = ReadWriteRaw.readDoublesfromWav(wavFileName);
         if (raw_data == null){
             System.out.println("wav - no ha leido nada!!!");
             return;
         }
         System.out.println("wav - lectura hecha .."+raw_data.size()+" samples." );
-        try {
-			ReadWriteRaw.writeDoublesToRaw(raw_data, "out2_"+rawFileName);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        
+        // save audio file to verify
+        ReadWriteRaw.writeDoublesToRaw(raw_data, "out_"+rawFileName);
+		
 	}
 	
 	static void filter1() {
 		// 1 - IIR_Filter - butterworth filter
     
     	System.out.println("IIR_Filter - butterworth filter");
-        // ArrayList<Double> >> double[]
+        // ArrayList<Double> -> double[]
         double[] data = new double[raw_data.size()];
         for (int i = 0; i < data.length; i++) {
             data[i] = raw_data.get(i);
@@ -87,7 +72,7 @@ public class Main {
         
         System.out.println("-filter 1-");
         
-        // filter works with doubles
+        // filter (it works with doubles)
         iir_fil = new IIR_Filter(44100, 500, 3500); // order 6
         double[] data1 = iir_fil.butter_bandpass_filter(data);
         
@@ -96,17 +81,18 @@ public class Main {
         // double[] >> // ArrayList<Double>
         filter1_data = new ArrayList<Double>();
         for (int i = 0; i < data1.length; i++) {
-            filter1_data.add(data1[i]);
+        	filter1_data.add(data1[i]);
         }
+		if(DEBUG){
+			for(int i=0; i<100; i++){
+				System.out.println(i+" f1 - "+raw_data.get(i)
+						+"     "+filter1_data.get(i));
+				}
+		}
 
         filter_data = filter1_data;
 
-        try {
-			ReadWriteRaw.writeDoublesToRaw(filter1_data, filtered1Name);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        ReadWriteRaw.writeDoublesToRaw(filter1_data, filtered1Name);
             
 	}
 
@@ -126,36 +112,57 @@ public class Main {
 
         filter_data = filter2_data;
 
-        try {
-			ReadWriteRaw.writeDoublesToRaw(filter2_data, filtered2Name);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        ReadWriteRaw.writeDoublesToRaw(filter2_data, filtered2Name);
+		
+	}
+	
+	static void filter3() {
+		// ButterworthBPF - Filter - butterworth filter
+    
+    	System.out.println("Butterworth BP F");
+        
+        System.out.println("-filter 3-");
+        
+        // filter (it works with doubles)
+        ButterworthBPF bwbp = new ButterworthBPF();
+        bwbp.createFilter(4, 44100, 500, 3500);
+        filter3_data = bwbp.filter(raw_data);
+        
+        System.out.println("-filter 3-");
+        
+        
+        filter_data = filter3_data;
+
+        ReadWriteRaw.writeDoublesToRaw(filter3_data, filtered3Name);
+		
+            
 	}
 	
 	private static void fastFurierTransform() {
 		System.out.println("FFT");
-        fft_data = Transform.fft(raw_data); // frequency domain
-        ArrayList<Double> r_transformed = Transform.fft_inv(fft_data); // time domain
+		// TRANSFORM
+        fft_data = Transform.fft(filter_data); // frequency domain
+        
+        // WRITE VALUES
         try {
-			ReadWriteRaw.writeDoublesToRaw(r_transformed, transformedName);
+			ReadWriteRaw.writeComplexToPlain(fft_data, transformedValName);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+        
+        // WRITE RAW after fft_inv
+        ArrayList<Double> r_transformed = Transform.fft_inv(fft_data); // time domain
+        ReadWriteRaw.writeDoublesToRaw(r_transformed, transformedName);
+		
 	}
 
 	private static void noiseSubstraction() {
 		System.out.println("Substraction");
         Complex[][] filt_fft_data = Transform.substractNoise(fft_data); // frequency domain
         ArrayList<Double> r_substracted = Transform.fft_inv(filt_fft_data); // time domain
-        try {
-			ReadWriteRaw.writeDoublesToRaw(r_substracted, susbstractedName);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        ReadWriteRaw.writeDoublesToRaw(r_substracted, susbstractedName);
+		
 	}
 
 }

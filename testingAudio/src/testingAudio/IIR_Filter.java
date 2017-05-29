@@ -14,7 +14,7 @@ import org.apache.commons.math3.complex.Complex;
 public class IIR_Filter {
 
 	final static int N = 10; //The number of images which construct a time series for each pixel
-	final static double PI = 3.14159;
+	final static double PI = Math.PI;
 	final static int filterOrder = 6;
 	
 	//private double[] FrequencyBands = new double[2];
@@ -52,7 +52,7 @@ public class IIR_Filter {
 	    // DenC is A in Matlab function
 		// NumC is B in Matlab function
 	    DenC = ComputeDenCoeffs();
-	    NumC = ComputeNumCoeffs2();
+	    NumC = ComputeNumCoeffs();
 	    
 	    if (DEBUG){
 	    	int size = 2*filterOrder+1;
@@ -74,16 +74,17 @@ public class IIR_Filter {
 	 */
 	public double[] butter_bandpass_filter(double[] input){
 		int size = input.length;
-		double[] output = new double[size];
-	    
-		
+		double[] output;
 		int np = size;//number of samples
-	    filter(filterOrder, DenC, NumC, np, input, output);    
+		
+		output = filter(filterOrder, DenC, NumC, np, input);  
+	    //filter2(DenC, NumC, input, output);    
 	    
 	    if (DEBUG_showSamples){
-		    for(int k = 0; k<size; k++)
+	    	int ini = 0;
+		    for(int k = ini; k<ini+100 && k<size; k++)
 		    	System.out.printf(k+" x is: "+input[k]+
-		    			"/ y is: "+output[k]+
+		    			"/\t y is: "+output[k]+
 		    			//" // mult: "+ input[k]*output[k]+
 		    			"\n");
 	    }
@@ -91,88 +92,65 @@ public class IIR_Filter {
 	    return output;
 	}
 	
-	private static void filter(int ord, double[] a, double[] b, int np,
-			double[] x, double[] y) {
+	 private static double[] filter(int ord, double[] a, double[] b, int np,
+			double[] x) {
 		// denC -- a
 		// numC -- b
-		
+		double[] y = new double[np];
 		int i,j;
-	    y[0]=b[0] * x[0];
-	    for (i=1;i<ord;i++) // y[i],, i<order
+	    y[0] = b[0] * x[0];
+	    for (i=1;i<ord+1;i++) // y[i],, i<=order
 	    {
 	        y[i] = 0.0;
 	        for (j=0;j<i+1;j++)
-	            y[i]=y[i]+b[j]*x[i-j];
+	            y[i] += b[j]*x[i-j];
 	        for (j=0;j<i;j++)
-	            y[i]=y[i]-a[j+1]*y[i-j-1];
+	            y[i] -= a[j+1]*y[i-j-1];
 	    }
 	    for (i=ord+1;i<np;i++) // y[i],, i>order
 	    {
 	        y[i]=0.0;
 	        for (j=0;j<ord+1;j++)
-	            y[i]=y[i]+b[j]*x[i-j];
+	            y[i] += b[j]*x[i-j];
 	        for (j=0;j<ord;j++)
-	            y[i]=y[i]-a[j+1]*y[i-j-1];
+	            y[i] -= a[j+1]*y[i-j-1];
 	    }
+	    return y;
+		
+	}
+	private static void filter2(double[] a, double[] b, double[] x, double[] y) {
+		/*Esto da mas muestras en la respuesta... no me gusta !!!! TODO */
+		// denC -- a ->y   (d)
+		// numC -- b ->x   (c)
+		double s1; /* a sum of products of dk's and y's */
+		double s2; /* a sum of products of ck's and x's */
+				
+		int nc = b.length; /* number of ck coeff's */
+		int nd = a.length; /* number of dk coeff's */
+		int nx = x.length; /* number of data points to filter */
+		int ny; /* number of output points */
+		ny = nx + nc;
+		y = new double[ny];//(double *)calloc( ny, sizeof(double) ); /* calloc initializes to zero */
+		
+		for(int i=0; i<ny; ++i) {y[i]=0;}
+		
+		for(int i=0; i<ny; ++i){
+			s1 = 0.0;
+			for(int j = (i<nd ? 0 : i-nd+1); j<i; ++j)
+				s1 += a[i-j] * y[j];
+			
+			s2 = 0.0;
+			for(int j = (i < nc ? 0 : i-nc+1); j <= (i<nx ? i : nx-1); ++j )
+				s2 += b[i-j] * x[j];
+			
+			y[i] = s2 - s1;
+		    
+		}
 		
 	}
 
-	private static double[] ComputeNumCoeffs() {
-		double[] TCoeffs;
-	    double[] NumCoeffs;
-	    Complex[] NormalizedKernel;
-	    double[] Numbers = {0,1,2,3,4,5,6,7,8,9,10};
-	    int i;
-
-	    NumCoeffs = new double[2*filterOrder+1];//(double *)calloc( 2*FilterOrder+1, sizeof(double) );
-	    
-	    NormalizedKernel = new Complex[2*filterOrder+1];
-	    		// = (complex<double> *)calloc( 2*FilterOrder+1, sizeof(complex<double>) );
-	    
-
-	    TCoeffs = ComputeHP(filterOrder);
-	    if( TCoeffs == null ) return null ;
-
-	    for( i = 0; i < filterOrder; ++i)
-	    {
-	        NumCoeffs[2*i] = TCoeffs[i];
-	        NumCoeffs[2*i+1] = 0.0;
-	    }
-	    NumCoeffs[2*filterOrder] = TCoeffs[filterOrder];
-	    double[] cp = new double[2];
-	    double Bw, Wn;
-	    cp[0] = 2*2.0*Math.tan(PI * Lcutoff/ 2.0);
-	    cp[1] = 2*2.0*Math.tan(PI * Ucutoff / 2.0);
-
-	    Bw = cp[1] - cp[0];
-	    //center frequency
-	    Wn = Math.sqrt(cp[0]*cp[1]);
-	    Wn = 2*Math.atan2(Wn,4);
-	    
-	    Complex result = new Complex(-1,0);
-	    //const complex<double> result = complex<double>(-1,0);
-	    Complex sq = result.sqrt();
-	    
-	    for(int k = 0; k<11; k++)
-	    {
-	        //NormalizedKernel[k] = std::exp(-sqrt(result)*Wn*Numbers[k]);
-	    	NormalizedKernel[k] = sq.multiply((-1)*Wn*Numbers[k]).exp();
-	    }
-	    double b=0;
-	    double den=0;
-	    for(int d = 0; d<11; d++)
-	    {
-	        b += (NormalizedKernel[d].multiply(NumCoeffs[d])).getReal();
-	        den += (NormalizedKernel[d].multiply(DenC[d])).getReal();
-	    }
-	    for(int c = 0; c<11; c++)
-	    {
-	        NumCoeffs[c]=(NumCoeffs[c]*den)/b;
-	    }
-
-	    return NumCoeffs;
-	}
-	private static double[] ComputeNumCoeffs2(){
+	
+	private static double[] ComputeNumCoeffs(){
 		// int FilterOrder,double Lcutoff, double Ucutoff, double *DenC)
 		
 		double[] TCoeffs;	// double *TCoeffs;
@@ -230,7 +208,6 @@ public class IIR_Filter {
 
 	    return NumCoeffs;
 	    
-		
 	}
 	
 	private static double[] ComputeHP(int filterOrder) {

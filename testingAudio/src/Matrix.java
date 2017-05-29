@@ -1,8 +1,51 @@
 
 public class Matrix {
 
-	// cortar eje x [x1,x2]
+	double[] mat;
+	int h;
+	int w;
+	
+	
+	public Matrix(double matrix[], int height, int width){
+		assert(matrix.length == height*width);
+		h = height;
+		w = width;
+		mat =  new double[h*w];
+		for (int i=0; i<h*w; i++){
+			mat[i] = matrix[i];
+		}
+	}
+	
+	double[] getCortarEjeX(int x1, int x2){
+		assert(0<=x1 && x1<=x2 && x2<w);
+		int newW = x2-x1+1;
+		double[] newMat = new double[newW*h];
+		for (int j=0; j<h; j++){
+			for (int i=0; i<newW; i++){
+				newMat[newW*j +i] = mat[w*j +x1 +i];
+			}
+		}
+		return newMat;
+	}
+	
+	void cortarEjeX(int x1, int x2){
+		assert(0<=x1 && x1<=x2 && x2<w);
+		double[] newMat = getCortarEjeX(x1,x2);
+		w = x2-x1+1; // new w
+		System.arraycopy( newMat, 0, mat, 0, newMat.length );
+	}
+	
+	/**
+	 * cortar eje x [x1,x2]
+	 * @param mat
+	 * @param H
+	 * @param W
+	 * @param x1 extremo eje x menor
+	 * @param x2 extremo eje x mayor
+	 * @return
+	 */
 	static double[] cortarEjeX(double mat[], int H, int W, int x1, int x2){
+		assert(x1<x2 && x2<W);
 		int newW = x2-x1+1;
 		double[] newMat = new double[newW*H];
 		for (int j=0; j<H; j++){
@@ -43,6 +86,8 @@ public class Matrix {
 		return newContent;
 	}
 	
+	
+	
 	// interpolar eje x (interpolacion lineal)
 	static double[] interpolY(int H, int W, int newH, double[] content){
 		double[] newContent = new double[newH*W];
@@ -73,6 +118,42 @@ public class Matrix {
 		return newContent;
 	}
 	
+	static double[] doubleFromInt(int[] content){
+		double[] content_d = new double[content.length];
+		for(int i=0; i<content.length;i++){
+			content_d[i] = content[i];
+		}
+		return content_d;
+	}
+	
+	static int[] duplicarEjeY(int veces,int H, int W, int[] content){
+		assert(veces>0);
+		int[] newMat = new int[H*W*veces];
+		for(int i=0; i<H; i++){
+			for(int k=0; k<veces; k++){
+				for(int j=0; j<W; j++){
+					//if(i*j*k<100)System.out.println("Imprimiendo: fila"+(i*veces+k)+" columna"+j+" ("+i+"i,"+k+"k,"+j+"j)");
+					newMat[(i*veces+k)*W+j] = content[i*W+j];
+				}
+			}
+		}
+		
+		return newMat;
+	}
+	
+	static double[] duplicarEjeY(int veces,int H, int W, double[] content){
+		assert(veces>0);
+		double[] newMat = new double[H*W*veces];
+		for(int i=0; i<H; i++){
+			for(int k=0; k<veces; k++){
+				for(int j=0; j<W; j++){
+					newMat[(i*veces+k)*W+j] = content[i*W+j];
+				}
+			}
+		}
+		
+		return newMat;
+	}
 	
 	// normalizar intensidades
 	static public double[] normalizeVal(int H, int W, double[] content){
@@ -108,7 +189,24 @@ public class Matrix {
 			System.out.println(" ");
 		}
 		System.out.println("}");
+	}
 	
+	// print
+	static void printMatriz(int height, int width, int[] content){
+		System.out.println("int matrix[] = { ");
+		System.out.print("    ");
+		for (int j=0; j<width;j++){
+			System.out.print(j+"    ");
+		}
+		System.out.println(" ");
+		for (int i=0; i<height; i++){
+			System.out.print(i+"   ");
+			for (int j=0; j<width;j++){
+				System.out.print(content[i*width+j]+", ");
+			}
+			System.out.println(" ");
+		}
+		System.out.println("}");
 	}
 	
 	////////////////////////// cosine similarity
@@ -126,6 +224,13 @@ public class Matrix {
 	    return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
 	}
 	
+	/**
+	 * nomalizar matriz. Norma 2
+	 * @param height
+	 * @param width
+	 * @param content
+	 * @return
+	 */
 	public static double[] matrixL2norm(int height, int width, double[] content){
 		double[] m = new double[height*width];
 		
@@ -212,6 +317,9 @@ public class Matrix {
 		
 		//double[] m3 = matrixL2norm(hh, ww, m);
 		//printMatriz(hh,ww,m3);
+		
+		double[] m4 = duplicarEjeY(2,hh,ww,m);
+		printMatriz(hh*2,ww,m4);
 		
 		double[] n = {
 				1,1,1,
