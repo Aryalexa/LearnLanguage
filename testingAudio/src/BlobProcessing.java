@@ -12,6 +12,7 @@ public class BlobProcessing {
 	public static final int GREEN_MASK = 0x0000ff00;
 	public static final int BLUE_MASK  = 0x000000ff;
 	
+	static boolean DEBUG = false;
 	
 	/** Actual dimensions of pixels array, taking into account the 2x setting. */
 	public int picWidth; 	// The width of the image in units of pixels.
@@ -49,8 +50,8 @@ public class BlobProcessing {
 	  
 	  // show blobdetection's number of blobs 
 	  for (int lev=0 ; lev<levels; lev++){
-	    System.out.println("--blob detection "+lev+": "+theBlobDetection[lev].getBlobNb());
-	    showMinMaxValues(lev);
+	    if (DEBUG) System.out.println("--blob detection "+lev+": "+theBlobDetection[lev].getBlobNb());
+	    //showMinMaxValues(lev);
 	  }
 	  
 	  //int l_ = 5; // choose blob detection
@@ -60,6 +61,73 @@ public class BlobProcessing {
 		  
 	}
 
+	/////////
+	public Matrix[] getBoundedPics(){
+		Matrix[] pics = new Matrix[(int) levels];
+		int[] x = new int[]{0,0};
+		int[] y = new int[]{0,0};
+		for (int i=0 ; i<levels ; i++) { 
+			getMinMax(i,x,y);
+			if (DEBUG) System.out.println("boundedPic "+i+" ejeY: "+y[0]+" < "+y[1]+" < "+picHeight);
+			pics[i] = new Matrix(pic,picHeight, picWidth);
+			pics[i].cortarEjeY(y[0], y[1]);
+		  }
+		return pics;
+	}
+	
+	public Matrix[] getBoundedVals(double[][] _vals){
+		// prepare 1D matrix
+		int vH = _vals.length;
+		int vW = _vals[0].length;
+		double[] vals = new double[vH*vW];
+		for (int h=0; h<vH; h++){
+			for (int w=0; w<vW; w++){
+				vals[h*vW + w] = _vals[h][w];
+			}
+		}
+		// actual process
+		Matrix[] bVals = new Matrix[(int) levels];
+		int[] x = new int[]{0,0};
+		int[] y = new int[]{0,0};
+		for (int i=0 ; i<levels ; i++) { 
+			getMinMax(i,x,y);
+			if (DEBUG) System.out.println("boundedPic "+i+" ejeY: "+y[0]+" < "+y[1]+" < "+picHeight);
+		    bVals[i] = new Matrix(vals,picHeight, picWidth);
+		    bVals[i].cortarEjeY(y[0], y[1]);
+		  }
+		return bVals;
+	}
+	
+	/**
+	 * get xmin,xmax,ymin,ymax from all the blobs detected at especified level
+	 * @param level
+	 * @param x array where x[0]=xmin, x[1]=xmax
+	 * @param y array where y[0]=ymin, y[1]=ymax
+	 */
+	void getMinMax(int level, int[] x, int[] y){
+		x[0] = picWidth;   // xmin & xmax
+		x[1] = 0;
+		y[0] = picHeight;  // ymin & ymax
+		y[1] = 0;
+		Blob b; int numBlobs = 0;
+		for (int n=0 ; n<theBlobDetection[level].getBlobNb() ; n++) {
+		    b=theBlobDetection[level].getBlob(n);
+		    if (b!=null) { 
+		    	x[0] = Math.min(x[0], (int) Math.floor(b.xMin*picWidth*factor));
+		    	x[1] = Math.max(x[1], (int) Math.floor(b.xMax*picWidth*factor));
+		    	y[0] = Math.min(y[0], (int) Math.floor(b.yMin*picHeight*factor));
+		    	y[1] = Math.max(y[1], (int) Math.floor(b.yMax*picHeight*factor));
+		    	numBlobs++;
+		    }
+		}
+		if (DEBUG) System.out.println("BlobProcess-getminmax - level"+level+". numblob:"+numBlobs);
+
+		
+		
+	}
+	//////
+	
+	
 	void showMinMaxValues(int bt){
 		Blob b;
 		//EdgeVertex eA,eB;
@@ -82,6 +150,7 @@ public class BlobProcessing {
 		    	int rgtdn_a = (int) Math.floor(b.xMax*picWidth*factor);
 		    	int rgtdn_b = (int) Math.floor(b.yMax*picHeight*factor);
 		     
+		    	
 		    	System.out.println("  blob "+n);
 		    	System.out.println(
 		    			"    ("+lftup_a+","+lftup_b+")"+"       "+"("+rgtup_a+","+rgtup_b+")"
@@ -95,9 +164,9 @@ public class BlobProcessing {
 		  }
 	}
 	
-	int[] getEdges(){
+	int[] getEdges(int level){
 		int x,y;
-		int i = 5; // number of the chosen blob detection object
+		int i = level; // number of the chosen blob detection object
 		int n; // number of the chosen detected blob
 		int[] edges = new int[picHeight*picWidth];
 		for(int j =0; j<edges.length; j++){
@@ -114,14 +183,15 @@ public class BlobProcessing {
 				    eA = b.getEdgeVertexA(m);
 				    eB = b.getEdgeVertexB(m);
 				    if (eA !=null && eB !=null){
+				    	System.out.print("("+i+","+n+"):");
 				    	x = (int) (eA.x*picWidth*factor);
 				    	y = (int) (eA.y*picHeight*factor);
-						System.out.println("A"+i+n+"  x:"+x+"  "+"y:"+y);
+						System.out.print(" A=("+x+","+y+")");
 				    	edges[x+y*picWidth] = 3;
 				    	x = (int) (eB.x*picWidth*factor);
 				    	y = (int) (eB.y*picHeight*factor);
 				    	edges[x+y*picWidth] = 3;
-						System.out.println("B"+i+n+"  x:"+x+"  "+"y:"+y);
+						System.out.println(" / B=("+x+","+y+")");
 				    }
 				    
 				}
@@ -173,7 +243,7 @@ public class BlobProcessing {
 		
 		BlobProcessing b_t = new BlobProcessing(picture.height, picture.width, picture.colors);
 		b_t.compute();
-		int[] edges = b_t.getEdges();
+		int[] edges = b_t.getEdges(5);
 		Matrix.printMatriz(picHeight,picWidth,edges);
 	}
 	

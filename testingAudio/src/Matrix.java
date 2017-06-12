@@ -1,3 +1,5 @@
+import testingAudio.Constantes;
+
 
 public class Matrix {
 
@@ -5,7 +7,22 @@ public class Matrix {
 	int h;
 	int w;
 	
+	public Matrix(int matrix[], int height, int width){
+		assert(matrix.length == height*width);
+		h = height;
+		w = width;
+		mat =  new double[h*w];
+		for (int i=0; i<h*w; i++){
+			mat[i] = matrix[i];
+		}
+	}
 	
+	/**
+	 * 
+	 * @param matrix
+	 * @param height
+	 * @param width
+	 */
 	public Matrix(double matrix[], int height, int width){
 		assert(matrix.length == height*width);
 		h = height;
@@ -16,27 +33,24 @@ public class Matrix {
 		}
 	}
 	
-	double[] getCortarEjeX(int x1, int x2){
-		assert(0<=x1 && x1<=x2 && x2<w);
-		int newW = x2-x1+1;
-		double[] newMat = new double[newW*h];
-		for (int j=0; j<h; j++){
-			for (int i=0; i<newW; i++){
-				newMat[newW*j +i] = mat[w*j +x1 +i];
-			}
-		}
-		return newMat;
-	}
-	
-	void cortarEjeX(int x1, int x2){
-		assert(0<=x1 && x1<=x2 && x2<w);
-		double[] newMat = getCortarEjeX(x1,x2);
-		w = x2-x1+1; // new w
-		System.arraycopy( newMat, 0, mat, 0, newMat.length );
-	}
 	
 	/**
-	 * cortar eje x [x1,x2]
+	 * 
+	 * @param x1
+	 * @param x2
+	 */
+	public void cortarEjeX(int x1, int x2){
+		mat = Matrix.cortarEjeX(mat,h,w,x1,x2);
+		if (x1<=x2 && x2<=w) w = x2-x1+1;
+	}
+	
+	public double[] getCortarEjeX(int x1, int x2){
+		return  Matrix.cortarEjeX(mat,h,w,x1,x2);
+	}
+	
+	
+	/**
+	 * cortar eje x [x1,x2] - double
 	 * @param mat
 	 * @param H
 	 * @param W
@@ -45,7 +59,8 @@ public class Matrix {
 	 * @return
 	 */
 	static double[] cortarEjeX(double mat[], int H, int W, int x1, int x2){
-		assert(x1<x2 && x2<W);
+		if (!(x1<=x2 && x2<=W)) return null;
+
 		int newW = x2-x1+1;
 		double[] newMat = new double[newW*H];
 		for (int j=0; j<H; j++){
@@ -54,6 +69,51 @@ public class Matrix {
 			}
 		}
 		return newMat;
+	}
+	
+	/**
+	 * 
+	 * @param y1
+	 * @param y2
+	 */
+	public void cortarEjeY(int y1, int y2){
+		mat = Matrix.cortarEjeY(mat,h,w,y1,y2);
+		if (y1<=y2 && y2<=h) h = y2-y1+1;
+	}
+	
+	public double[] getCortarEjeY(int y1, int y2){
+		return Matrix.cortarEjeY(mat,h,w,y1,y2);
+	}
+	
+	/**
+	 * cortar eje Y [x1,x2] -  int
+	 * @param mat
+	 * @param H
+	 * @param W
+	 * @param y1 extremo eje y menor
+	 * @param y2 extremo eje y mayor
+	 * @return
+	 */
+	static double[] cortarEjeY(double mat[], int H, int W, int y1, int y2){
+		if (!(y1<=y2 && y2<H)) return null;
+		
+		int newH = y2-y1+1;
+		double[] newMat = new double[W*newH];
+		for (int i=0; i<newH; i++){
+			for (int j=0; j<W; j++){
+				newMat[W*i +j] = mat[W*(i + y1) +j];
+			}
+		}
+		return newMat;
+	}
+	
+	/**
+	 * interpolar eje x (interpolacion lineal)
+	 * @param newW
+	 */
+	public void interpolX(int newW){
+		mat = Matrix.interpolX(h, w, newW, mat);
+		w = newW;
 	}
 	
 	// interpolar eje x (interpolacion lineal)
@@ -86,9 +146,16 @@ public class Matrix {
 		return newContent;
 	}
 	
+	/**
+	 * interpolar eje y (interpolacion lineal)
+	 * @param newH
+	 */
+	public void interpolY(int newH){
+		mat = Matrix.interpolY(h, w, newH, mat);
+		h = newH;
+	}
 	
-	
-	// interpolar eje x (interpolacion lineal)
+	// interpolar eje y (interpolacion lineal)
 	static double[] interpolY(int H, int W, int newH, double[] content){
 		double[] newContent = new double[newH*W];
 		//System.out.println(" h:"+H+" new:"+newH);
@@ -155,20 +222,63 @@ public class Matrix {
 		return newMat;
 	}
 	
-	// normalizar intensidades
-	static public double[] normalizeVal(int H, int W, double[] content){
-		// valores: (0 - 100)
-		double[] newContent = new double[H*W];
+	// normalizar intensidades (enteros)
+	static public int[] normalizeVal(int H, int W, int[] content, int scale){
+		// valores: (0 - newMax)
+		int newMax = scale;
+		int[] newContent = new int[H*W];
 		
-		double max = content[0];
-		double min = content[0];
+		int max = content[0];
+		int min = content[0];
 		for (int i=1; i<H*W; i++){
 			max = Math.max(max, content[i]);
 			min = Math.min(min, content[i]);
 		}
 		
 		for (int i=0; i<H*W; i++){
-			newContent[i] = (content[i]-min)*100/(max-min);
+			newContent[i] = (content[i]-min)*newMax/(max-min);
+		}
+		return newContent;
+	}
+	
+	// normalizar intensidades (doubles)
+		static public double[] normalizeVal(int H, int W, double[] content, int scale){
+			// valores: (0 - newMax)
+			int newMax = scale;
+			double[] newContent = new double[H*W];
+			
+			double max = content[0];
+			double min = content[0];
+			for (int i=1; i<H*W; i++){
+				max = Math.max(max, content[i]);
+				min = Math.min(min, content[i]);
+			}
+			
+			for (int i=0; i<H*W; i++){
+				newContent[i] = (content[i]-min)*newMax/(max-min);
+			}
+			return newContent;
+		}
+	
+	// escala logartimica, logarithmic scale
+	static public double[] scaleLog(int height, int width, double[] content){
+		double[] newContent = new double[height*width];
+		for(int i=0;  i<height*width; i++){
+			newContent[i] = 10*Math.log10(content[i]);
+		}
+		return newContent;
+	}
+	
+	// transpuesta
+	static public double[] transpose(int height, int width, double[] content){
+		double[] newContent = new double[height*width];
+		// from fila+fila >> columna+columna
+		int n=0;
+		for (int j=0; j<width; j++){
+			for (int i=0; i<height; i++){
+				newContent[n] = content[width*i + j];
+				n++;
+			}
 		}
 		return newContent;
 	}
@@ -267,14 +377,74 @@ public class Matrix {
 	
 	//////////////////////// normas
 	
-	// frobenius norm
-	public static double fobreniusNorm(int H, int W, double[] m){
+	// NORMA Frobenius 
+	public static double normaFrobenius(int H, int W, double[] m){
 		double norm = 0;
 		for(int i=0; i<H*W; i++){
 			norm += Math.pow(m[i], 2);
 		}
 		return Math.sqrt(norm);
 	}
+	
+	/**
+	 * NORMA1. máxima suma absoluta de las columnas de la matriz.
+	 * @param H
+	 * @param W
+	 * @param m
+	 * @return
+	 */
+	public static double norma1(int H, int W, double[] m){
+		double suma;
+		double norm = 0;
+		
+		for (int j=0; j<W; j++){
+			suma = 0;
+			for (int i=0; i<H; i++){
+				suma += Math.abs(m[W*i + j]); //leyendo columnas
+			}
+			norm = Math.max(norm, suma);
+		}
+		return norm;
+	}
+	
+	/**
+	 * 	NORMA INFINITO. máxima suma absoluta de las filas de la matriz.
+	 * @param H
+	 * @param W
+	 * @param m
+	 * @return
+	 */
+	public static double normaInfinito(int H, int W, double[] m){
+		double suma;
+		double norm = 0;
+		
+		for (int i=0; i<H; i++){
+			suma = 0;
+			for (int j=0; j<W; j++){
+				suma += Math.abs(m[W*i + j]); //leyendo filas
+			}
+			norm = Math.max(norm, suma);
+		}
+		return norm;
+	}
+	
+	
+	
+	////////// distancias
+	
+	public static double distanciaF(int H, int W, double[] m1, double[] m2){
+		double[] dif = matrixAbsDifference(H,W,m1,m2);
+		return normaFrobenius(H,W,dif);
+	}
+	public static double distancia1(int H, int W, double[] m1, double[] m2){
+		double[] dif = matrixAbsDifference(H,W,m1,m2);
+		return norma1(H,W,dif);
+	}
+	public static double distanciaInfinito(int H, int W, double[] m1, double[] m2){
+		double[] dif = matrixAbsDifference(H,W,m1,m2);
+		return normaInfinito(H,W,dif);
+	}
+	
 	
 	public static double[] matrixAbsDifference(int H, int W, double[] m1, double[] m2){
 		double[] dif = new double[H*W];
@@ -286,13 +456,76 @@ public class Matrix {
 	
 	////////////////////// similitud
 	
-	public static double similarityFromDistance(double dist){
-		return (1- dist);
+	public static void printSimilarity(int H, int W, double[] m1, double[] m2){
+		double dist;
+		System.out.println("DIST -");
+
+		
+		dist = distanciaInfinito(H,W,m1,m2);
+		System.out.println(" inf.: "+dist);
+
+		dist = distancia1(H,W,m1,m2);
+		System.out.println(" uno.: "+dist);
+		
+		dist = distanciaF(H,W,m1,m2);
+		System.out.println(" frb.: "+dist);
+		
 	}
 	
-	/////////////////////////
+	public static void printStatics(double[] v){
+		System.out.println("EST -");
+		System.out.println(" max.  : "+getMaxVal(v));
+		System.out.println(" media.: "+getMedia(v));
+		System.out.println(" moda. : "+getModa(v));
+		
+	}
+	
+	public static double getMaxVal(double[] v){
+		double max = -1;
+		for (int i=0; i<v.length; i++){
+			max = Math.max(max, v[i]);
+		}
+		return max;
+	}
+	
+	public static double getMedia(double[] v){
+		double media = 0;
+		for (int i=0; i<v.length; i++){
+			media += v[i];
+		}
+		return media/v.length;
+	}
+	
+	public static double getModa(double[] v){
+		double[] vOrd = Constantes.quicksort(v);
+		double moda = vOrd[0];
+		int maxcont = 1;
+		int cont = 1;
+		for (int i=1; i<vOrd.length; i++){
+			if (vOrd[i]==vOrd[i-1]){
+				cont++;
+				if (cont > maxcont){
+					maxcont = cont;
+					moda = vOrd[i];
+				}
+			} else {
+				cont = 1;
+			}
+		}
+		//System.out.println("(((moda: "+moda + "("+maxcont+"veces))))");
+
+		return moda;
+	}
+	
+	///////////////////////// TESTS
 	
 	public static void main(String[] args) {
+		test_mat();
+		test_estadisticas();
+	}
+
+	
+	static void test_mat(){
 		int hh = 5;
 		int ww = 5;
 		double[] m = {
@@ -302,13 +535,21 @@ public class Matrix {
 			4,5,6,7,8,
 			5,6,7,8,9
 		};
+		double[] n = {
+				1,2,3,4,5,
+				2,3,4,5,6,
+				3,0,5,6,7,
+				4,5,6,0,8,
+				5,6,7,8,9
+			};
 		
+		Matrix mm = new Matrix(n,hh,ww);
+		mm.cortarEjeY(1, 3);
+		System.out.println("Matrix. h:"+mm.h+" w:"+mm.w);
+		printMatriz(mm.h,mm.w,mm.mat);
 		
-		//double[] m2 = cortarEjeX(m, hh, ww, 1, 3);
-		//printMatriz(hh,3,m2);
-		
-		double[] m2 = interpolX(hh,ww,ww+1,m);
-		printMatriz(hh,ww+1,m2);
+		//double[] m2 = interpolX(hh,ww,ww+1,m);
+		//printMatriz(hh,ww+1,m2);
 		double[] m3 = interpolY(hh,ww,hh+1,m);
 		printMatriz(hh+1,ww,m3);
 		
@@ -321,15 +562,25 @@ public class Matrix {
 		double[] m4 = duplicarEjeY(2,hh,ww,m);
 		printMatriz(hh*2,ww,m4);
 		
-		double[] n = {
+		double[] p = {
 				1,1,1,
 				1,2,1
 			};
 		hh=2; ww = 3;
-		double[] n2 = matrixL2norm(hh,ww,n);
-		double[] simN = cosineSimilarity4Matrix(hh,ww,n2,hh,ww,n2);
+		double[] p2 = matrixL2norm(hh,ww,p);
+		double[] simN = cosineSimilarity4Matrix(hh,ww,p2,hh,ww,p2);
 		printMatriz(hh,hh,simN);
 		    
 	}
-	
+	static void test_estadisticas(){
+		double[] vec = {2,34,5,53,232,5,34,5,45,4,4,2,6,234,2,23,5};
+		printStatics(vec);
+		
+		double[] vOrd = Constantes.quicksort(vec);
+		for (int i=0; i<vOrd.length; i++){
+			System.out.println(" "+vOrd[i]);
+
+		}
+		
+	}
 }

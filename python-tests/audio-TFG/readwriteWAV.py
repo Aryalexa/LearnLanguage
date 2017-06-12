@@ -9,16 +9,22 @@ import matplotlib.pyplot as plt
 ''' R E A D I N G '''
 name = 'itadakimasu_A'
 rate, sound_samples = read(name+'.wav')
+# leach sample is a short (2 bytes)
 sound_samples_2 = np.float64(sound_samples / 32768.0) # 2^15 = 64*512
+sound_samples_3 = np.float64(sound_samples) # 2^15 = 64*512
+sound_samples_4 = np.float32(sound_samples)
 lenn = len(sound_samples)
 
-print '--- rate: ', rate
-print '--- sound samples', sound_samples
-print 'len muestras: ', len(sound_samples)
-print '---                   before:   ||   after: (/ 32768.0) '
-print 'max muestras: ', max(sound_samples),'||', max(sound_samples_2)
-print 'min muestras: ', min(sound_samples),'||', min(sound_samples_2)
 
+for i in range(0,10):
+		print i, sound_samples[i], sound_samples_2[i], sound_samples_3[i], sound_samples_4[i]
+
+print '--- rate: ', rate
+#print '--- sound samples', sound_samples
+print 'len muestras: ', len(sound_samples)
+print '---            before:   ||   after: (/ 32768.0) '
+print 'max muestras: ', max(sound_samples),'||', max(sound_samples_2),'||', max(sound_samples_3),'||', max(sound_samples_4)
+print 'min muestras: ', min(sound_samples),'||', min(sound_samples_2),'||', min(sound_samples_3),'||', min(sound_samples_4)
 
 ''' W R I T I N G '''
 filtered_2 = sound_samples_2
@@ -27,9 +33,9 @@ write(name+'-copy.wav', rate, filtered)
 
 
 
-for i in range(0,100):
-	print i, sound_samples[i], sound_samples_2[i]
-	print i, filtered[i], filtered_2[i]
+#for i in range(0,100):
+#	print i, sound_samples[i], sound_samples_2[i]
+#	print i, filtered[i], filtered_2[i]
 
 ''' P L O T I N G '''
 # PLOT 

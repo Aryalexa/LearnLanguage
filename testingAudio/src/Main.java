@@ -1,10 +1,3 @@
-import java.io.IOException;
-import java.util.ArrayList;
-
-import org.apache.commons.math3.complex.Complex;
-
-import testingAudio.*;
-import blobDetection.*;
 
 
 /**
@@ -16,97 +9,80 @@ import blobDetection.*;
 
 public class Main {
 
-	static String fileName = "itadakimasuA";//prueba001;itadakimasuA
-	static String rawFileName = fileName + ".raw";
-	static String wavFileName = fileName + ".wav";
-	static ArrayList<Double> raw_data;
-
-	static String filtered3Name = fileName + "-3filterC.raw";
-	static ArrayList<Double> filter3_data;
-	static ArrayList<Double> filter_data;
+	static String fileName1 = "kor3";//prueba001;itadakimasuA;kor1;esp1
+	static String fileName2 = "kor1";//prueba001;itadakimasuA;kor1;esp1
 	
-	static String transformedName = fileName + "-4fft.raw";
-	static String transformedValName = fileName + "-4fft-values";
-	static String susbstractedName = fileName + "-5subsnoise.raw";
-	static Complex[][] fft_data ;
-	
-	static Picture picture;
-	
-	
+		
 	
 	public static void main(String[] args) {
-		
-		// this should call a funciton from testingAudio package 
+		// this should call a function from testingAudio package 
 		// which do everything with its classes
 		// TODO
-		readRaw();
-		filter3();
-		fastFurierTransform();
+		
+		AudioProcessing ap1 = new AudioProcessing(fileName1);
+		ap1.process();
+		Matrix[] pics1 = ap1.getBoundedVals();//ap1.getBoundedPics();
 
-		//width is always NUM_CHUNKS = 4096
-		picture = new Picture(fft_data.length, fft_data[0].length, fft_data);
+
+		AudioProcessing ap2 = new AudioProcessing(fileName2);
+		ap2.process();
+		Matrix[] pics2 = ap2.getBoundedVals();//ap2.getBoundedPics();
+
 		
-		// WRITE VALUES
-		ReadWriteRaw.writeIntToPlain(picture.colors, "colores");
+		//printMatriz(pics1[15].mat,"pic1");
+		//printMatriz(pics2[15].mat,"pic2");
 		
 		
-		//blob_test b_t = new blob_test();
-		//b_t.setup(picture.height, picture.width, picture.colors);
-		//b_t.compute();
+		comparar(pics1,pics2);
+		
         
     }
 	
-	static void readRaw(){
-		// read shorts
-        raw_data = ReadWriteRaw.readDoublesfromWav(wavFileName);
-        if (raw_data == null){
-            System.out.println("wav - no ha leido nada!!!");
-            return;
-        }
-        System.out.println("wav - lectura hecha .."+raw_data.size()+" samples." );
-        // save audio file to verify
-        ReadWriteRaw.writeDoublesToRaw(raw_data, "out_"+rawFileName);
+	static void comparar(Matrix[] ms1, Matrix[] ms2){
+		int numMat = ms1.length;
+		int maxH,maxW;
 		
-	}
-	
-	static void filter3() {
-		// ButterworthBPF - Filter - butterworth filter
-    
-    	System.out.println("Butterworth BP F");
-        
-        System.out.println("-filter 3-");
-        
-        // filter (it works with doubles)
-        ButterworthBPF bwbp = new ButterworthBPF();
-        bwbp.createFilter(4, 44100, 500, 3500);
-        filter3_data = bwbp.filter(raw_data);
-        
-        System.out.println("-filter 3-");
-        
-        
-        filter_data = filter3_data;
-
-        ReadWriteRaw.writeDoublesToRaw(filter3_data, filtered3Name);
-		
-	}
-	
-	static void fastFurierTransform() {
-		System.out.println("FFT");
-		// TRANSFORM
-        fft_data = Transform.fft(filter_data); // frequency domain
-        
-        // WRITE VALUES
-        try {
-			ReadWriteRaw.writeComplexToPlain(fft_data, transformedValName);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		for (int i=numMat/4; i<numMat; i++){
+			if (ms1[i].mat != null && ms2[i].mat != null){
+				System.out.println(""+i+" - - - - - - - - - - - ");
+				maxH = Math.max(ms1[i].h, ms2[i].h);
+				maxW = Math.max(ms1[i].w, ms2[i].w);
+		       
+				//System.out.print("ms"+i+" - ms1_H:"+ms1[i].h+" - ms1_W:"+ms1[i].w);
+		        //System.out.println(" / ms2_H:"+ms2[i].h+" - ms2_W:"+ms2[i].w);
+		        //System.out.println("ms"+i+" - ms1_H*W:"+ms1[i].mat.length+" = "+ms1[i].h*ms1[i].w);
+				
+		        ms1[i].interpolX(maxW);
+				ms1[i].interpolY(maxH);
+				ms2[i].interpolX(maxW);
+				ms2[i].interpolY(maxH);
+				
+				comparar(ms1[i],ms2[i]);
+				
+			}
 		}
+	}
+	static void comparar(Matrix m1, Matrix m2){
+		double r;
+		r = Matrix.cosineSimilarity(m1.mat, m2.mat);
+        System.out.println("cosine similarity - res por fil:"+r);
+        r = Matrix.cosineSimilarity(Matrix.transpose(m1.h, m1.w, m1.mat), Matrix.transpose(m2.h, m2.w, m2.mat));
+        System.out.println("cosine similarity - res por col:"+r);
         
-        // WRITE RAW after fft_inv
-        ArrayList<Double> r_transformed = Transform.fft_inv(fft_data); // time domain
-        ReadWriteRaw.writeDoublesToRaw(r_transformed, transformedName);
-		
+        //printMatriz(m2.mat,"m2");
+        
+        Matrix.printSimilarity(m1.h, m1.w, m1.mat, m2.mat);
+        Matrix.printStatics(m1.mat);
+        Matrix.printStatics(m2.mat);
+
+	}
+	
+	public static void printMatriz(double[] data,String name){
+		int ini=0;
+		int num = Math.min(100, data.length);
+		for(int i=ini; i<ini+num; i++){
+			System.out.println(name+" "+data[i]);
+		}
 	}
 
 }

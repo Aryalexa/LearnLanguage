@@ -491,7 +491,24 @@ public class ReadWriteRaw {
 		} 
 	}
 
-	
+	public static void writeDoubleToPlain(double[][] data, String outputName) {
+		PrintWriter w;
+		try {
+			w = new PrintWriter(outputName);
+			for (int i=0; i<data.length; i++){
+				for (int j=0; j<data[i].length; j++){
+					w.print(data[i][j]+" ");
+				}
+				w.print("\n");
+			}
+			w.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+	}
 	
 	public static void writeComplexToPlain(Complex[][] data, String outputName) throws FileNotFoundException{
 		PrintWriter w = new PrintWriter(outputName);

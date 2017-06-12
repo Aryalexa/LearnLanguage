@@ -1,5 +1,11 @@
 from scipy.signal import butter, lfilter
+'''
+Example
 
+1. Plot the frequency response for a few different orders.
+2. Filter a noisy signal. The signal is created by mathematical functions.
+
+'''
 
 def butter_bandpass(lowcut, highcut, fs, order=5):
     nyq = 0.5 * fs

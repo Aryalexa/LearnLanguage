@@ -20,8 +20,10 @@ import org.apache.commons.math3.transform.TransformType;
 
 public class Transform {
 
-	static int CHUNK_SIZE = 4096; // muestras de 16bits=2bytes
+	static int CHUNK_SIZE = Constantes.CHUNK_SIZE; // muestras de 16bits=2bytes
+	static boolean DEBUG = false;
 
+	
     public static Complex[][] fft(ByteArrayOutputStream out) {
         byte audio[] = out.toByteArray();
 
@@ -71,16 +73,53 @@ public class Transform {
 
     }
     
+    /**
+     * spectrogram by chunks
+     * @param audio
+     * @return
+     */
+    public static Complex[][] fft_2(ArrayList<Double> audio) {
+    	FastFourierTransformer fft = new FastFourierTransformer(DftNormalization.STANDARD);
+        
+        final int totalSize = audio.size();
+        int amountPossible = totalSize / Constantes.CHUNK_SIZE;
+        if (DEBUG) {
+        	System.out.println("original total:"+totalSize+
+        		", chunkSIZE:"+CHUNK_SIZE+
+        		", amountPossible:"+amountPossible+
+        		", real total:"+CHUNK_SIZE*amountPossible);
+        }
+        
+        
+        
+        // When turning into frequency domain we'll need complex numbers:
+        Complex[][] results = new Complex[amountPossible][];
+
+        // For all the chunks:
+        for (int times = 0; times < amountPossible; times++) {
+            Complex[] complex = new Complex[CHUNK_SIZE];
+            for (int i = 0; i < CHUNK_SIZE; i++) {
+                // Put the time domain data into a complex number with imaginary part as 0:
+                complex[i] = new Complex(audio.get( (times * CHUNK_SIZE) + i ), 0);
+            }
+            // Perform FFT analysis on the chunk:
+            results[times] = fft.transform(complex, TransformType.FORWARD);
+        }
+        return results;
+    }
+    
     public static Complex[][] fft(ArrayList<Double> audio) {
     	FastFourierTransformer fft = new FastFourierTransformer(DftNormalization.STANDARD);
         
         final int totalSize = audio.size();
-        int amountPossible = totalSize / CHUNK_SIZE;
-        System.out.println("original total:"+totalSize+
+        int amountPossible = totalSize / Constantes.CHUNK_SIZE;
+        if (DEBUG){
+        	System.out.println("original total:"+totalSize+
         		", chunkSIZE:"+CHUNK_SIZE+
         		", amountPossible:"+amountPossible+
         		", real total:"+CHUNK_SIZE*amountPossible);
-
+        }
+        
         // When turning into frequency domain we'll need complex numbers:
         Complex[][] results = new Complex[amountPossible][];
 

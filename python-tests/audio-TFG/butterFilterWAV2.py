@@ -37,15 +37,17 @@ if __name__ == "__main__":
 	#''' R E A D I N G '''
 	name = 'itadakimasu_A'
 	rate, sound_samples = read(name+'.wav')
+	sound_samples0 = sound_samples
 	sound_samples = np.float64(sound_samples / 32768.0) # 2^15 = 64*512
 
 	for i in range(0,10):
-		print i, sound_samples[i], sound_samples[i]
+		print i, sound_samples[i]
 	print '--- rate: ', rate
 	print 'len muestras: ', len(sound_samples)
 	print '---             : (/ 32768.0)   ||   normal: '
 	print 'max muestras: ', max(sound_samples),'||', max(sound_samples)*32768
 	print 'min muestras: ', min(sound_samples),'||', min(sound_samples)*32768
+
 	#''' F I L T E R I N G '''
 	# Sample rate and desired cutoff frequencies (in Hz).
 	#fs = rate

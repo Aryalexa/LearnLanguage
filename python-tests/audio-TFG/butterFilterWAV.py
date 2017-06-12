@@ -20,21 +20,18 @@ print 'max muestras: ', max(sound_samples),'||', max(sound_samples)*32768
 print 'min muestras: ', min(sound_samples),'||', min(sound_samples)*32768
 
 
-''' F I L T E R I N G '''
+''' C R E A T E   F I L T E R '''
 pass_freq = 0.2
 stop_freq = 0.3
 pass_gain = 0.5 # permissible loss (ripple) in passband (dB)
 stop_gain = 10.0 # attenuation required in stopband (dB)
 ord, wn = buttord(pass_freq, stop_freq, pass_gain, stop_gain)
 
-
-''' W R I T I N G '''
+''' F I L T E R I N G '''
 print '--- orden: ', ord
 print '--- wn corte?: ', wn
 b, a = butter(ord, wn, btype = 'low')
 filtered = lfilter(b, a, sound_samples)
-filtered = np.int16(filtered * 32768 * 10) # 16bit integer 
-write(name+'-filtered.wav', rate, filtered)
 
 
 ''' P L O T I N G '''
@@ -43,7 +40,8 @@ a = 0.05
 f0 = 1000.0 # Hz
 T = 0.15
 t = np.linspace(0, T, len(sound_samples))#, endpoint=False)
-plt.figure(1)
+
+plt.figure(1) # valores originales
 plt.clf()
 
 plt.subplot(211)
@@ -61,5 +59,34 @@ plt.hlines([-a, a], 0, T, linestyles='--')
 plt.grid(True)
 plt.axis('tight')
 plt.legend(loc='upper left')
+
+
+''' W R I T I N G '''
+filtered = np.int16(filtered * 32768 ) #* 10) # 16bit integer 
+write(name+'-filtered.wav', rate, filtered)
+
+
+plt.figure(2)
+plt.clf()
+
+plt.subplot(211)
+plt.plot(t, sound_samples*32768, label='Noisy signal')
+plt.xlabel('time (seconds)')
+plt.hlines([-a, a], 0, T, linestyles='--')
+plt.grid(True)
+plt.axis('tight')
+plt.legend(loc='upper left')
+
+plt.subplot(212)
+plt.plot(t, filtered, label='Filtered signal (%g Hz)' % f0)
+plt.xlabel('time (seconds)')
+plt.hlines([-a, a], 0, T, linestyles='--')
+plt.grid(True)
+plt.axis('tight')
+plt.legend(loc='upper left')
+
+
+
+
 
 plt.show()

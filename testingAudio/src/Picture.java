@@ -13,6 +13,7 @@ public class Picture {
 	
 	private int[] integers;
 	private Complex[] complex;
+	private double[] doubleValues;
 	int[] colors;
 
 	
@@ -28,16 +29,56 @@ public class Picture {
 	 */
 	public Picture(int height, int width, Complex[][] complex){
 		setSize(height, width);
+		
 		setComplexValues(complex);
 		if (DEBUG) printMatriz(this.complex,"complex");
-		updateIntegerValues();
+		
+		updateIntegerValues("complex");
 		if (DEBUG) printMatriz(integers, "colores-enteros");
-		updateIntegerValues255();
+		
+		updateIntegerValues255("integer");
 		if (DEBUG) printMatriz(integers, "colores-255");
+		
+		//invertIntegerValues255();
+		if (DEBUG) printMatriz(integers, "colores-255-inv");
+		
 		updateColor();
 		if (DEBUG) printMatriz(colors, "colores");
-		ensanchar();
-		// now you can use colors[] as pixels[]
+		
+		//ensanchar();
+		
+		// now you can use colors[] as pixels
+	}
+	
+	/**
+	 * Constructor a partir de doubles. 
+	 * Construye el atributo colors[] al que podemos tratar como un array de pixeles 
+	 * @param height
+	 * @param width
+	 * @param values
+	 */
+	public Picture(int height, int width, double[][] values){
+		setSize(height, width);
+		
+		setDoubleValues(values);
+		if (DEBUG) printMatriz(this.doubleValues,"doubleValues");
+		
+		updateIntegerValues255("double");
+		if (DEBUG) printMatriz(doubleValues, "colores-255");
+		
+		updateIntegerValues("double");
+		if (DEBUG) printMatriz(integers, "colores enteros-255");
+
+		
+		//invertIntegerValues255();
+		if (DEBUG) printMatriz(integers, "colores-255-inv");
+		
+		updateColor();
+		if (DEBUG) printMatriz(colors, "colores");
+		
+		//ensanchar();
+		
+		// now you can use colors[] as pixels
 	}
 	
 	/**
@@ -80,6 +121,19 @@ public class Picture {
 		}
 	}
 	
+	private void setDoubleValues(double[][] doubles){
+		// necesario: H and W
+		// 2D-array de doubles -> 1D-array de complejos
+		
+		this.doubleValues = new double[nComp];
+		
+		for (int h=0; h<this.height; h++){
+			for (int w=0; w<this.width; w++){
+				this.doubleValues[h*this.width + w] = doubles[h][w];
+			}
+		}
+	}
+	
 	private void setIntegerValues(int[] ints){
 		// necesario: H and W
 		integers = new int[nComp];
@@ -88,39 +142,94 @@ public class Picture {
 		}
 	}
 	
-	private void updateIntegerValues(){
+	private void updateIntegerValues(String tipo_origen){
+		// 1D-array complex/double -> 1D-array integer
+
+		// necesario: tener this.doubleValues inicializado.
+		if (tipo_origen == "double"){
+			integers = new int[nComp];
+			for (int i=0; i<nComp; i++){
+				integers[i] = (int) Math.floor(doubleValues[i]);
+				
+			}
+		}
+		
 		// necesario: tener this.complex inicializado.
-		// 1D-array complex -> 1D-array integer
-		integers = new int[nComp];
-		for (int i=0; i<nComp; i++){
-			integers[i] = conver_1(complex[i]);
-			//integers[i] = conver_2(this.complex[i]);
+		else if (tipo_origen == "complex"){
+			int neg =0;
+			doubleValues = new double[nComp];
+			for (int i=0; i<nComp; i++){
+				doubleValues[i] = conver_3(complex[i]);
+				//integers[i] = conver_2(this.complex[i]);
+				if (doubleValues[i] <0) {
+					neg++;
+				}
+			}
+			if (DEBUG) printMaxMin("argumentos positivos","doubleValues");
+			logarithmicScale();
+			if (DEBUG) printMaxMin("logaritmo*1000","doubleValues");
+
+			integers = new int[nComp];;
+			for (int i=0; i<nComp; i++){
+				integers[i] = (int) ( doubleValues[i]<0 ? 0 : doubleValues[i]*1000 );
+			}
+			if (DEBUG) printMaxMin("enteros","integers");
+			if (DEBUG) System.out.println("argumentos negativos "+neg);
+		}
+		else {
+			System.out.println("argumento no valido");
+
 		}
 	}
 	
-	private int conver_1(Complex z){
-		// complex -> int (1)
-		double x = Math.abs( (z.getReal() + z.getImaginary()) / 0.002);
-		return (int) Math.floor(x);
+	private double conver_1(Complex z){
+		// complex -> int (la media entre parte real e imaginaria * 10000)
+		double x = Math.abs( z.getReal() + z.getImaginary()) / 2 * 10000;
+		return x;
 	}
 	
-	private int conver_2(Complex z){
-		// complex -> int (2)
-		double x = z.multiply(100).getArgument();
-		return (int) Math.floor(x);
+	private double conver_2(Complex z){
+		// complex -> int ( modulo del numero complejo * 10000)
+		double x = z.getArgument() * 10000;
+		return x;
 	}
 	
-	private void updateIntegerValues255(){
+	private double conver_3(Complex z){
+		// complex -> int ( modulo del numero complejo * 10000)
+		double x = Math.abs(z.getArgument()) * 10000;
+		return x;
+	}
+	
+	private void updateIntegerValues255(String tipo){
 		// necesario: tener this.integers inicializado.
-		// 1D-array integers -> 1D-array integers [0,255]
-		int max = 0;
-		for (int i=0; i<nComp; i++){
-			max = Math.max(max, integers[i]);
+		// 1D-array integers [min,max] -> 1D-array integers [0,255]
+		
+		if (tipo == "integer"){
+			if (DEBUG) printMaxMin("antes de 255","integers");
+			integers = Matrix.normalizeVal(height, width, integers, 255);
+			if (DEBUG) printMaxMin("despues de 255","integers");
 		}
-		if (max==0)System.out.println("max es 0!!!!");
-		System.out.println("max --> "+max);
+		else if (tipo == "double"){
+			if (DEBUG) printMaxMin("antes de 255","doubleValues");
+			doubleValues = Matrix.normalizeVal(height, width, doubleValues, 255);
+			if (DEBUG) printMaxMin("despues de 255","doubleValues");
+		}
+		else {
+			System.out.println("argumento no valido");
+
+		}
+	}
+	private void logarithmicScale(){
+		doubleValues = Matrix.scaleLog(height, width, doubleValues);
+	}
+	
+	
+	private void invertIntegerValues255(){
+		// necesario: tener this.integers inicializado.
+		// 1D-array integers [0,255] -> invertir( 1D-array integers [0,255] )
 		for (int i=0; i<nComp; i++){
-			integers[i] = integers[i]*255/max;
+			if (DEBUG) System.out.println("1:"+integers[i]+" 2:"+(255-integers[i]));
+			integers[i] = 255-integers[i];
 		}
 	}
 	
@@ -160,6 +269,13 @@ public class Picture {
 			System.out.println(name+" "+data[i]+" \t\t "+Integer.toHexString(data[i])+" (Base16)");
 		}
 	}
+	public void printMatriz(double[] data,String name){
+		int ini=0;
+		int num = 100;
+		for(int i=ini; i<ini+num; i++){
+			System.out.println(name+" "+data[i]);
+		}
+	}
 	public void printMatriz(Complex[] data,String name){
 		int ini=0;
 		int num = 100;
@@ -173,7 +289,26 @@ public class Picture {
 		colors = Matrix.duplicarEjeY(veces, height, width, colors);
 	}
 
-	
+	private void printMaxMin(String titulo, String arrayName){
+		if (arrayName=="integers") {
+			int max = 0;
+			int min = 0;
+			for (int i=0; i<nComp; i++){
+				max = Math.max(max, integers[i]);
+				min = Math.min(min, integers[i]);
+			}
+			System.out.println(titulo+" -\t max --> "+max+ " / min --> "+min);
+		}
+		if (arrayName=="doubleValues") {
+			double max = 0;
+			double min = 0;
+			for (int i=0; i<nComp; i++){
+				max = Math.max(max, doubleValues[i]);
+				min = Math.min(min, doubleValues[i]);
+			}
+			System.out.println(titulo+" -\t max --> "+max+ " / min --> "+min);
+		}
+	}
 	
 	public static void main(String[] args) {
 		//set();
@@ -195,6 +330,8 @@ public class Picture {
 		//16448250 B10, fafafa B16
 		
 		//-16777216 = 0xff000000 >> 0xffffffff=-1
+		
+		
 		
 	}
 }
