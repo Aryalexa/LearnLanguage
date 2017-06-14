@@ -9,7 +9,7 @@
 
 public class Main {
 
-	static String fileName1 = "kor3";//prueba001;itadakimasuA;kor1;esp1
+	static String fileName1 = "esp2";//prueba001;itadakimasuA;kor1;esp1
 	static String fileName2 = "kor1";//prueba001;itadakimasuA;kor1;esp1
 	
 		

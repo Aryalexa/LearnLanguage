@@ -138,7 +138,7 @@ public class Spectrogram{
 		// for each frame in signals, do fft on it
 		FastFourierTransform fft = new FastFourierTransform();
 		for (int i=0; i<numFrames; i++){			
-			absoluteSpectrogram[i]=fft.getMagnitudes(signals[i]);
+			absoluteSpectrogram[i]=fft.getMagnitudes2(signals[i]);// TODO 1 o 2? 
 		}
 			
 		if (absoluteSpectrogram.length>0){

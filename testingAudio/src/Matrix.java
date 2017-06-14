@@ -158,16 +158,21 @@ public class Matrix {
 	// interpolar eje y (interpolacion lineal)
 	static double[] interpolY(int H, int W, int newH, double[] content){
 		double[] newContent = new double[newH*W];
-		//System.out.println(" h:"+H+" new:"+newH);
+		System.out.println(" h:"+H+" new:"+newH);
 		double next;
 		for(int j=0; j<W; j++){ // column
-			//System.out.println("--- column "+j);
+			System.out.println("--- column "+j+"--------------------");
 			// for all cols
 			int k = 0; // k: para recorrer las filas de content original
 			newContent[j] = content[k*W+j];
 			for(int i=1; i<newH; i++){ // i: para recorrer las filas de newContent
-				if ( ((double)i)/newH > ((double)k+1)/H) { k++; }
-				
+				System.out.println("fila "+i+"-----");
+
+				//if ( ((double)i)/newH > ((double)k+1)/H) { k++; }
+				while ( ((double)i)/newH > ((double)k+1)/H) { k++; }
+				System.out.println(" "+(double)i/newH+">"+((double)k+1)/H+"? k:"+k);
+				System.out.println(" next:"+content[(k+1)*W+j]+" / "+content[k*W+j]);
+				System.out.println(" actual:"+newContent[(i-1)*W + j]);
 				if (i<newH-1) next = content[(k+1)*W+j];
 				else next = content[k*W+j];
 				
@@ -520,10 +525,30 @@ public class Matrix {
 	///////////////////////// TESTS
 	
 	public static void main(String[] args) {
-		test_mat();
-		test_estadisticas();
+		//test_mat();
+		//test_estadisticas();
+		test_interpol();
+		
 	}
 
+	static void test_interpol(){
+		int hh = 5;
+		int ww = 5;
+		double[] m = {
+			1,2,3,4,5,
+			2,3,4,5,6,
+			3,4,5,6,7,
+			4,5,6,7,8,
+			5,6,7,8,9
+		};
+		printMatriz(hh,ww,m);
+		
+		//double[] m2 = interpolX(hh,ww,ww+1,m);
+		//printMatriz(hh,ww+1,m2);
+		
+		double[] m3 = interpolY(hh,ww,hh+13,m);
+		printMatriz(hh+13,ww,m3);
+	}
 	
 	static void test_mat(){
 		int hh = 5;
@@ -548,10 +573,7 @@ public class Matrix {
 		System.out.println("Matrix. h:"+mm.h+" w:"+mm.w);
 		printMatriz(mm.h,mm.w,mm.mat);
 		
-		//double[] m2 = interpolX(hh,ww,ww+1,m);
-		//printMatriz(hh,ww+1,m2);
-		double[] m3 = interpolY(hh,ww,hh+1,m);
-		printMatriz(hh+1,ww,m3);
+		
 		
 		//ouble[] m2 = normalizeVal(hh,  ww, m);
 		//printMatriz(hh,ww,m2);
