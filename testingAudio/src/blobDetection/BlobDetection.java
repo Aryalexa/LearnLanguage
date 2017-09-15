@@ -115,7 +115,7 @@ public void computeBlobs(int[] pixels)
 			 // > offset in the grid
 			offset		= x + resx*y;
 
-	         // > if we were already there, just go the next square!
+	         // > if we were already there, just go to the next pixel!
             if (gridVisited[offset] == true) continue;
                      
              // > squareIndex
@@ -215,7 +215,8 @@ void computeEdgeVertex(int iBlob, int x, int y)
 		offAB			= edgeOffsetInfo[2];
 	
 	    if (blob[iBlob].nbLine < Blob.MAX_NBLINE) 
-	    	lineToDraw[nbLineToDraw++] = blob[iBlob].line[blob[iBlob].nbLine++] = voxel[(x+offx) + resx*(y+offy)] + offAB;
+	    	lineToDraw[nbLineToDraw++] = blob[iBlob].line[blob[iBlob].nbLine++] 
+	    							   = voxel[(x+offx) + resx*(y+offy)] + offAB;
 	    else
 	    	return;
 	 }
@@ -225,7 +226,7 @@ void computeEdgeVertex(int iBlob, int x, int y)
 	 float value = 0.0f;
 	 if (toCompute>0)
 	 {
-	   if ( (toCompute & 1) > 0) // Edge 0
+	   if ( (toCompute & 1) > 0) // Edge 0 (1,3)
 	   {
 	   		t	= (isovalue - gridValue[offset]) / (gridValue[offset+1] - gridValue[offset]); 
 			value   = vx*(1.0f-t) + t*(vx+stepx); 
@@ -235,7 +236,7 @@ void computeEdgeVertex(int iBlob, int x, int y)
 			if (value > blob[iBlob].xMax ) blob[iBlob].xMax = value;
 	      
 	   }
-	   if ( (toCompute & 2) > 0) // Edge 3
+	   if ( (toCompute & 2) > 0) // Edge 3 (2,3)
 	   {
 	   		t	= (isovalue - gridValue[offset]) / (gridValue[offset+resx] - gridValue[offset]); 
 	   		value   = vy*(1.0f-t) + t*(vy+stepy);

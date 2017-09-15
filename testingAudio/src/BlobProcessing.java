@@ -1,4 +1,4 @@
-import org.apache.commons.math3.complex.Complex;
+//import org.apache.commons.math3.complex.Complex;
 
 import blobDetection.Blob;
 import blobDetection.BlobDetection;
@@ -62,19 +62,27 @@ public class BlobProcessing {
 	}
 
 	/////////
+	/**
+	 * Corta la matriz de colores segun los blobs de cada nivel
+	 * @return
+	 */
 	public Matrix[] getBoundedPics(){
 		Matrix[] pics = new Matrix[(int) levels];
 		int[] x = new int[]{0,0};
 		int[] y = new int[]{0,0};
 		for (int i=0 ; i<levels ; i++) { 
-			getMinMax(i,x,y);
+			processMinMax(i,x,y);
 			if (DEBUG) System.out.println("boundedPic "+i+" ejeY: "+y[0]+" < "+y[1]+" < "+picHeight);
 			pics[i] = new Matrix(pic,picHeight, picWidth);
 			pics[i].cortarEjeY(y[0], y[1]);
 		  }
 		return pics;
 	}
-	
+	/**
+	 * Corta la matriz _vals (del tamaño indicado) segun los blobs de cada nivel
+	 * @param _vals
+	 * @return
+	 */
 	public Matrix[] getBoundedVals(double[][] _vals){
 		// prepare 1D matrix
 		int vH = _vals.length;
@@ -90,7 +98,7 @@ public class BlobProcessing {
 		int[] x = new int[]{0,0};
 		int[] y = new int[]{0,0};
 		for (int i=0 ; i<levels ; i++) { 
-			getMinMax(i,x,y);
+			processMinMax(i,x,y); // processBigBlobMinMax(i,x,y); OR processMinMax(i,x,y);
 			if (DEBUG) System.out.println("boundedPic "+i+" ejeY: "+y[0]+" < "+y[1]+" < "+picHeight);
 		    bVals[i] = new Matrix(vals,picHeight, picWidth);
 		    bVals[i].cortarEjeY(y[0], y[1]);
@@ -99,12 +107,12 @@ public class BlobProcessing {
 	}
 	
 	/**
-	 * get xmin,xmax,ymin,ymax from all the blobs detected at especified level
+	 * calculate xmin,xmax,ymin,ymax from all the blobs detected at especified level
 	 * @param level
 	 * @param x array where x[0]=xmin, x[1]=xmax
 	 * @param y array where y[0]=ymin, y[1]=ymax
 	 */
-	void getMinMax(int level, int[] x, int[] y){
+	void processMinMax(int level, int[] x, int[] y){
 		x[0] = picWidth;   // xmin & xmax
 		x[1] = 0;
 		y[0] = picHeight;  // ymin & ymax
@@ -121,6 +129,38 @@ public class BlobProcessing {
 		    }
 		}
 		if (DEBUG) System.out.println("BlobProcess-getminmax - level"+level+". numblob:"+numBlobs);
+
+	}
+	/**
+	 * calculate xmin,xmax,yin,ymax of the biggest blob at level specified
+	 * @param level
+	 * @param x
+	 * @param y
+	 */
+	void processBigBlobMinMax(int level, int[] x, int[] y){
+		x[0] = picWidth;   // xmin & xmax
+		x[1] = 0;
+		y[0] = picHeight;  // ymin & ymax
+		y[1] = 0;
+		Blob b; 
+		int n = 0; //number of blobs
+		float size, maxsize=0;
+		for (n=0 ; n<theBlobDetection[level].getBlobNb() ; n++) {
+		    b=theBlobDetection[level].getBlob(n);
+		    if (b!=null) { 
+		    	size = (b.xMax - b.xMin) * (b.yMax - b.yMin);
+		    	maxsize = Math.max(maxsize, size);
+		    	if(size > maxsize){
+		    		maxsize = size;
+		    		x[0] = (int) Math.floor(b.xMin*picWidth*factor);
+		    		x[1] = (int) Math.floor(b.xMax*picWidth*factor);
+			    	y[0] = (int) Math.floor(b.yMin*picHeight*factor);
+			    	y[1] = (int) Math.floor(b.yMax*picHeight*factor);
+		    	}
+		    	
+		    }
+		}
+		if (DEBUG) System.out.println("BlobProcess-getminmax - level"+level+". numblob:"+n+". maxSize:"+maxsize);
 
 		
 		

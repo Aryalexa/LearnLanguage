@@ -16,13 +16,13 @@
 
 package Spectrogram;
 
-import org.apache.commons.math3.transform.DftNormalization;
-import org.apache.commons.math3.transform.FastFourierTransformer;
-import org.apache.commons.math3.transform.TransformType;
+//import org.apache.commons.math3.transform.DftNormalization;
+//import org.apache.commons.math3.transform.FastFourierTransformer;
+//import org.apache.commons.math3.transform.TransformType;
 
 
 /**
- * FFT object, transform amplitudes to frequency intensities
+ * FFT object, transform amplitudes to frequency intensities - con ediciones.
  * 
  * @author Jacquet Wong
  * 
@@ -64,7 +64,13 @@ public class FastFourierTransform {
 
 		return mag;
 	}
-	
+	/**
+	 * Get the frequency intensities
+	 * 
+	 * amplitudes double -> complejos -> fft complejos -> fft magnitudes positivas
+	 * @param amplitudes, len=N
+	 * @return magnitud, len=N
+	 */
 	public double[] getMagnitudes2(double[] amplitudes) {
 
 		int sampleSize = amplitudes.length;

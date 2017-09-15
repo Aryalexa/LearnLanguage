@@ -1,8 +1,5 @@
-import java.io.IOException;
 
 import org.apache.commons.math3.complex.Complex;
-
-import testingAudio.ReadWriteRaw;
 
 
 public class Picture {
@@ -36,7 +33,7 @@ public class Picture {
 		updateIntegerValues("complex");
 		if (DEBUG) printMatriz(integers, "colores-enteros");
 		
-		updateIntegerValues255("integer");
+		updateValues255("integer");
 		if (DEBUG) printMatriz(integers, "colores-255");
 		
 		//invertIntegerValues255();
@@ -63,7 +60,7 @@ public class Picture {
 		setDoubleValues(values);
 		if (DEBUG) printMatriz(this.doubleValues,"doubleValues");
 		
-		updateIntegerValues255("double");
+		updateValues255("double");
 		if (DEBUG) printMatriz(doubleValues, "colores-255");
 		
 		updateIntegerValues("double");
@@ -159,22 +156,25 @@ public class Picture {
 			int neg =0;
 			doubleValues = new double[nComp];
 			for (int i=0; i<nComp; i++){
-				doubleValues[i] = conver_3(complex[i]);
+				doubleValues[i] = module(complex[i]);
 				//integers[i] = conver_2(this.complex[i]);
 				if (doubleValues[i] <0) {
 					neg++;
 				}
 			}
+			if (DEBUG) System.out.println("argumentos negativos "+neg);
+			
 			if (DEBUG) printMaxMin("argumentos positivos","doubleValues");
-			logarithmicScale();
+			if (DEBUG) logarithmicScale();
 			if (DEBUG) printMaxMin("logaritmo*1000","doubleValues");
 
-			integers = new int[nComp];;
+			integers = new int[nComp];
+			if (DEBUG)
 			for (int i=0; i<nComp; i++){
 				integers[i] = (int) ( doubleValues[i]<0 ? 0 : doubleValues[i]*1000 );
 			}
 			if (DEBUG) printMaxMin("enteros","integers");
-			if (DEBUG) System.out.println("argumentos negativos "+neg);
+			
 		}
 		else {
 			System.out.println("argumento no valido");
@@ -188,19 +188,19 @@ public class Picture {
 		return x;
 	}
 	
-	private double conver_2(Complex z){
-		// complex -> int ( modulo del numero complejo * 10000)
-		double x = z.getArgument() * 10000;
-		return x;
-	}
-	
-	private double conver_3(Complex z){
-		// complex -> int ( modulo del numero complejo * 10000)
+	private double abs_argument(Complex z){
+		// complex -> int ( argummento(angulo) del numero complejo * 10000)
 		double x = Math.abs(z.getArgument()) * 10000;
 		return x;
 	}
 	
-	private void updateIntegerValues255(String tipo){
+	private double module(Complex z){
+		// complex -> int ( modulo del numero complejo * 10000)
+		double x = Math.sqrt(z.getReal()*z.getReal() + z.getImaginary()*z.getImaginary()) * 10000;
+		return x;
+	}
+	
+	private void updateValues255(String tipo){
 		// necesario: tener this.integers inicializado.
 		// 1D-array integers [min,max] -> 1D-array integers [0,255]
 		
@@ -240,7 +240,8 @@ public class Picture {
 	
 	public static int getColorAto0xAAA(int a){
 		int a1;// = convertAto0xA(a);
-		a1 = a*256*256 + a*256 + a;
+		//a = (0xff << 24 )+ (a<<16) + (a<<8) + a;
+		a1 = (a<<16) + (a<<8) + a;
 		return a1;
 	}
 	
@@ -258,7 +259,7 @@ public class Picture {
 	}
 	
 	private int addAlphaColor(int color){
-		int alphaFF = 0xff000000;
+		int alphaFF = 0xff << 24; // 0xff000000
 		return color + alphaFF;	
 	}
 	
@@ -312,22 +313,21 @@ public class Picture {
 	
 	public static void main(String[] args) {
 		//set();
-		int a,e;
-		String s,t;
+		int a;
 		
 		//convertAto0xA
-		// 15 (b16)--> 21 (b10)
-		e = Integer.valueOf(String.valueOf(15), 16);
+		// 15 (b16) --> 21 (b10)
 		
-		System.out.println("----------shigakhaeyo-------------");
-		a = 255 ; // 0-255
+		System.out.println("----------shijakhaeyo-------------");
+		a = 0xfa ; // 0-255
 		System.out.println("color :"+a+" B10, "+Integer.toHexString(a)+" B16");
 		// 250 B10, fa B16
 		a = getColorAto0xAAA(a);
 		System.out.println("color :"+a+" B10, "+Integer.toHexString(a)+" B16");
+		//16448250 B10, fafafa B16
 		a = 0xff000000 + a;
 		System.out.println("color :"+a+" B10, "+Integer.toHexString(a)+" B16");
-		//16448250 B10, fafafa B16
+		//-328966 B10, fffafafa B16
 		
 		//-16777216 = 0xff000000 >> 0xffffffff=-1
 		

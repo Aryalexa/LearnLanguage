@@ -25,7 +25,8 @@ public class AudioProcessing {
 	//private String susbstractedName = fileName + "-5subsnoise.raw";
 	private Complex[][] fft_data ;	// fft 1
 	private double[][] spec;		// fft 2
-	private Picture picture;
+	private Picture picture1;		// 1
+	private Picture picture2;		// 2
 	private BlobProcessing blob_pr ;
 	private Matrix[] bounded_pics;
 	private Matrix[] bounded_vals;
@@ -48,7 +49,7 @@ public class AudioProcessing {
 		
 		readRaw();
 		if (raw_data == null){
-            System.out.println("wav - no ha leido nada!!!");
+            System.out.println(fileName+".wav - no se ha leido nada!!!");
             return;
         }
 		
@@ -57,20 +58,20 @@ public class AudioProcessing {
 		
 		// FFT+colores: version 1 -  a mano
 		fastFurierTransform_1();
-		picture = new Picture(fft_data.length, fft_data[0].length, fft_data);
+		picture1 = new Picture(fft_data.length, fft_data[0].length, fft_data);
 		// WRITE VALUE
-		ReadWriteRaw.writeIntToPlain(picture.colors, fileName+"colores1");
+		ReadWriteRaw.writeIntToPlain(picture1.colors, fileName+"colores1");
 
 		
 		/// FFT+colores: version 2 - musicg
 		fastFurierTransform_2();
-		picture = new Picture(spec.length, spec[0].length, spec);	
-		if (DEBUG) System.out.println("pic: h:"+picture.height +"  w:"+  picture.width);
+		picture2 = new Picture(spec.length, spec[0].length, spec);	
+		if (DEBUG) System.out.println("pic: h:"+picture2.height +"  w:"+  picture2.width);
 		// WRITE VALUES
-		ReadWriteRaw.writeIntToPlain(picture.colors, fileName+"colores2");
+		ReadWriteRaw.writeIntToPlain(picture2.colors, fileName+"colores2");
 
 		
-		blob_pr = new BlobProcessing(picture.height, picture.width, picture.colors);
+		blob_pr = new BlobProcessing(picture2.height, picture2.width, picture2.colors);
 		blob_pr.compute();
 		
 		bounded_pics = blob_pr.getBoundedPics();
@@ -84,7 +85,7 @@ public class AudioProcessing {
             System.out.println("wav - no ha leido nada!!!");
             return;
         }
-        System.out.println(wavFileName+".wav - lectura hecha .."+raw_data.size()+" samples." );
+        System.out.println(wavFileName+" - lectura hecha .."+raw_data.size()+" samples." );
         // save audio file to verify
         ReadWriteRaw.writeDoublesToRaw(raw_data, "out_"+rawFileName);
 		
@@ -122,7 +123,7 @@ public class AudioProcessing {
         //try {
 		//	ReadWriteRaw.writeComplexToPlain(fft_data, transformedValName);
 		//} catch (IOException e) {
-		//	// TODO Auto-generated catch block
+		//	// 
 		//	e.printStackTrace();
 		//}
         
@@ -155,7 +156,7 @@ public class AudioProcessing {
         //try {
 		//	ReadWriteRaw.writeComplexToPlain(fft_data, transformedValName);
 		//} catch (IOException e) {
-		//	// TODO Auto-generated catch block
+		//	// 
 		//	e.printStackTrace();
 		//}
         

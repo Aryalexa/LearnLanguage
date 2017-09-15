@@ -116,28 +116,23 @@ public class Matrix {
 		w = newW;
 	}
 	
-	// interpolar eje x (interpolacion lineal)
 	static double[] interpolX(int H, int W, int newW, double[] content){
 		double[] newContent = new double[H*newW];
 		//System.out.println(" w:"+W+" nw:"+newW);
-		double next;
 		for(int j=0; j<H; j++){
 			//System.out.println("--- row "+j);
 			// for all rows
-			int k = 0; // k: para recorrer las columnas de content original
 			newContent[j*newW] = content[j*W];
+			int k = 1; // k: para recorrer las columnas de content original
 			for(int i=1; i<newW; i++){ // i: para recorrer las columnas de newContent
-				if ( ((double)i)/newW > ((double)k+1)/W) { k++; }
+				if ( ((double)i)/newW > ((double)k)/W && k!=W-1) { k++; }
 				
-				if (i<newW-1) next = content[j*W+k+1];
-				else next = content[j*W+k];
-				
-				//System.out.println(" k:"+k+" i:"+i+" k:"+(k+1)+" (x2="+(j*W+k+1)+"); ");
-				double div = (1/((double)W-1));
-				//System.out.println(" div:"+ div + "("+(W-1)+")");
-				double mul = ((double)i/(newW-1))-((double)k/(W-1));
-				//System.out.println(" mul:"+ mul + "("+(newW-1)+")");
-				newContent[j*newW + i] = content[j*W+k] + (next-content[j*W+k])/div*mul;
+				//System.out.println("*   i/nW:"+i+"/"+newW+"="+((double)i)/newW);
+				//System.out.println(" <= k/ W:"+k+"/"+   W+"="+((double)k)/W);
+				double prev = content[j*W+k-1];
+				double div = 1./W;
+				double mul = (double)i/newW - (double)k/W;
+				newContent[j*newW + i] = prev + (content[j*W+k] - prev)*mul/div;
 				
 			}
 			//System.out.println("");
@@ -155,33 +150,24 @@ public class Matrix {
 		h = newH;
 	}
 	
-	// interpolar eje y (interpolacion lineal)
 	static double[] interpolY(int H, int W, int newH, double[] content){
 		double[] newContent = new double[newH*W];
-		System.out.println(" h:"+H+" new:"+newH);
-		double next;
+		//System.out.println(" h:"+H+" new:"+newH);
 		for(int j=0; j<W; j++){ // column
-			System.out.println("--- column "+j+"--------------------");
+			//System.out.println("--- column "+j+"--------------------");
 			// for all cols
-			int k = 0; // k: para recorrer las filas de content original
-			newContent[j] = content[k*W+j];
+			newContent[j] = content[j];
+			int k = 1; // k: para recorrer las filas de content original
 			for(int i=1; i<newH; i++){ // i: para recorrer las filas de newContent
-				System.out.println("fila "+i+"-----");
-
-				//if ( ((double)i)/newH > ((double)k+1)/H) { k++; }
-				while ( ((double)i)/newH > ((double)k+1)/H) { k++; }
-				System.out.println(" "+(double)i/newH+">"+((double)k+1)/H+"? k:"+k);
-				System.out.println(" next:"+content[(k+1)*W+j]+" / "+content[k*W+j]);
-				System.out.println(" actual:"+newContent[(i-1)*W + j]);
-				if (i<newH-1) next = content[(k+1)*W+j];
-				else next = content[k*W+j];
 				
-				//System.out.println(" k:"+k+" i:"+i+" k:"+(k+1)+" (x2="+(j*H+k+1)+"); ");
-				double div = (1/((double)H-1));
-				//System.out.println(" div:"+ div + "("+(H-1)+")");
-				double mul = ((double)i/(newH-1))-((double)k/(H-1));
-				//System.out.println(" mul:"+ mul + "("+(newH-1)+")");
-				newContent[i*W + j] = content[k*W+j] + (next-content[k*W+j])/div*mul;
+				if ( ((double)i)/newH > ((double)k)/H && k!=H-1) { k++; }
+				
+				//System.out.println("*   i/nH:"+i+"/"+newH+"="+((double)i)/newH);
+				//System.out.println(" <= k/ H:"+k+"/"+   H+"="+((double)k)/H);
+				double prev = content[(k-1)*W+j];
+				double div = 1./H;
+				double mul = (double)i/newH - (double)k/H;
+				newContent[i*W + j] = prev + (content[k*W+j] - prev)*mul/div;
 				
 			}
 			//System.out.println("");
@@ -333,10 +319,10 @@ public class Matrix {
 	    double normB = 0.0;
 	    for (int i = 0; i < vectorA.length; i++) {
 	        dotProduct += vectorA[i] * vectorB[i];
-	        normA += Math.pow(vectorA[i], 2);
-	        normB += Math.pow(vectorB[i], 2);
+	        normA += vectorA[i] * vectorA[i];
+	        normB += vectorB[i] * vectorB[i];
 	    }   
-	    return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
+	    return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB)); // = cos(a)
 	}
 	
 	/**
@@ -460,7 +446,14 @@ public class Matrix {
 	}
 	
 	////////////////////// similitud
-	
+	/**
+	 * Comparamos las matrices calculando las distancias entre ellas.
+	 * Usamos la distancia infinito, la uno y la de Frobenius.
+	 * @param H altura de las matrices
+	 * @param W ancho de las matrices
+	 * @param m1 matriz 1, se trata de un array de doubles
+	 * @param m2 matriz 2, se trata de un array de doubles
+	 */
 	public static void printSimilarity(int H, int W, double[] m1, double[] m2){
 		double dist;
 		System.out.println("DIST -");
@@ -477,11 +470,15 @@ public class Matrix {
 		
 	}
 	
+	/**
+	 * Calculamos el valor máximo y la media de los valores.
+	 * @param v array de doubles
+	 */
 	public static void printStatics(double[] v){
 		System.out.println("EST -");
 		System.out.println(" max.  : "+getMaxVal(v));
 		System.out.println(" media.: "+getMedia(v));
-		System.out.println(" moda. : "+getModa(v));
+		//sSystem.out.println(" moda. : "+getModa(v));
 		
 	}
 	
@@ -543,11 +540,11 @@ public class Matrix {
 		};
 		printMatriz(hh,ww,m);
 		
-		//double[] m2 = interpolX(hh,ww,ww+1,m);
-		//printMatriz(hh,ww+1,m2);
+		double[] m2 = interpolX(hh,ww,ww+10,m);
+		printMatriz(hh,ww+10,m2);
 		
-		double[] m3 = interpolY(hh,ww,hh+13,m);
-		printMatriz(hh+13,ww,m3);
+		double[] m3 = interpolY(hh,ww,hh+10,m);
+		printMatriz(hh+10,ww,m3);
 	}
 	
 	static void test_mat(){

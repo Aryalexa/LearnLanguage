@@ -9,9 +9,9 @@
 
 public class Main {
 
-	static String fileName1 = "esp2";//prueba001;itadakimasuA;kor1;esp1
-	static String fileName2 = "kor1";//prueba001;itadakimasuA;kor1;esp1
-	
+	static String fileName1 = "kor2";//itadakimasuA;kor1;esp1
+	static String fileName2 = "kor1";//itadakimasuA;kor1;esp1
+	static boolean DEBUG = false;
 		
 	
 	public static void main(String[] args) {
@@ -21,8 +21,7 @@ public class Main {
 		
 		AudioProcessing ap1 = new AudioProcessing(fileName1);
 		ap1.process();
-		Matrix[] pics1 = ap1.getBoundedVals();//ap1.getBoundedPics();
-
+		Matrix[] pics1 = ap1.getBoundedVals();
 
 		AudioProcessing ap2 = new AudioProcessing(fileName2);
 		ap2.process();
@@ -40,11 +39,12 @@ public class Main {
 	
 	static void comparar(Matrix[] ms1, Matrix[] ms2){
 		int numMat = ms1.length;
+		if (DEBUG) System.out.println("numMat "+ms1.length+" - - - - - - - - - - - ");
 		int maxH,maxW;
 		
 		for (int i=numMat/4; i<numMat; i++){
 			if (ms1[i].mat != null && ms2[i].mat != null){
-				System.out.println(""+i+" - - - - - - - - - - - ");
+				System.out.println(""+i+" - thr:"+i/(1.0f*numMat)*100+"% - - - - - - - - - - - ");
 				maxH = Math.max(ms1[i].h, ms2[i].h);
 				maxW = Math.max(ms1[i].w, ms2[i].w);
 		       
@@ -60,14 +60,16 @@ public class Main {
 				comparar(ms1[i],ms2[i]);
 				
 			}
+			else if (DEBUG) System.out.println(" nulos nivel "+i+" - - - - - - - - - - - ");
 		}
 	}
+	
 	static void comparar(Matrix m1, Matrix m2){
 		double r;
 		r = Matrix.cosineSimilarity(m1.mat, m2.mat);
         System.out.println("cosine similarity - res por fil:"+r);
-        r = Matrix.cosineSimilarity(Matrix.transpose(m1.h, m1.w, m1.mat), Matrix.transpose(m2.h, m2.w, m2.mat));
-        System.out.println("cosine similarity - res por col:"+r);
+        //r = Matrix.cosineSimilarity(Matrix.transpose(m1.h, m1.w, m1.mat), Matrix.transpose(m2.h, m2.w, m2.mat));
+        //System.out.println("cosine similarity - res por col:"+r);
         
         //printMatriz(m2.mat,"m2");
         
