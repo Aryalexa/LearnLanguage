@@ -2,7 +2,7 @@ from scipy.signal import butter, lfilter
 
 
 def butter_bandpass(lowcut, highcut, fs, order=5):
-    nyq = 0.5 * fs
+    nyq = 0.5 * fs ## half of the sample freq
     low = lowcut / nyq
     high = highcut / nyq
     b, a = butter(order, [low, high], btype='band')
@@ -26,7 +26,7 @@ if __name__ == "__main__":
 
     # Sample rate and desired cutoff frequencies (in Hz).
     fs = 44100.0
-    lowcut = 300.0
+    lowcut = 0.0 #00.0
     highcut = 4000.0
     order = 6 # 6 3 9
 
@@ -44,9 +44,6 @@ if __name__ == "__main__":
     x += a * np.cos(2 * np.pi * f0 * t + .11)
     x += 0.03 * np.cos(2 * np.pi * 2000 * t)
     #print x
-    plt.figure(2)
-    plt.clf()
-    plt.plot(t, x, label='Noisy signal')
     '''
     '''
     # 2
@@ -55,9 +52,11 @@ if __name__ == "__main__":
     '''
 
     # names
-    name = 'itadakimasu_A' # prueba001
+    name = 'itadakimasu_AA' # prueba001
     inputname = 'new'+name
     outputname = 'new'+name+'2'
+
+    
     # Get a noisy signal
     fin = open(inputname)
     x = [line.rstrip('\n') for line in fin]
@@ -67,13 +66,14 @@ if __name__ == "__main__":
     #    print ll
     fin.close()
     
+    
     # AUX
     T = 0.15
     nsamples = len(x)
     print 'len muestras: ', len(x)
     print 'max muestras: ', max(x)
+    print 'min muestras: ', min(x)
     t = np.linspace(0, T, nsamples)#, endpoint=False)
-    #print len(t)
 
     ''' F I L T E R '''
     # Filter !
@@ -86,14 +86,14 @@ if __name__ == "__main__":
     
     # Write result
     fout = open(outputname, 'w')
-    for res in x:
+    for res in y:
         fout.write(str(res)+'\n')
     fout.close()
     
 
     ''' P L O T I N G '''
     # PLOT 
-    a = 0.02
+    a = 0.05
     f0 = 1000.0 # Hz
     plt.figure(1)
     plt.clf()
