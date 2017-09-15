@@ -454,7 +454,7 @@ public class Matrix {
 	 * @param m1 matriz 1, se trata de un array de doubles
 	 * @param m2 matriz 2, se trata de un array de doubles
 	 */
-	public static void printSimilarity(int H, int W, double[] m1, double[] m2){
+	public static void printDistances(int H, int W, double[] m1, double[] m2){
 		double dist;
 		System.out.println("DIST -");
 

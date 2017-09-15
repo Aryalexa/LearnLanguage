@@ -96,13 +96,9 @@ public void computeBlobs(int[] pixels)
 	computeIsovalue();
 	
      // Get Lines indices
-	int		x,y,squareIndex,n;
-	int		iEdge;
-	int		offx, offy, offAB;
-	int		toCompute;
+	int		x,y,squareIndex;
 	int		offset;
-	float	t;
-	float	vx,vy;
+	float	vx,vy; // for counts
 
 	nbLineToDraw 	= 0;
 	vx	     		= 0.0f;
@@ -221,12 +217,12 @@ void computeEdgeVertex(int iBlob, int x, int y)
 	    	return;
 	 }
 	 
-	 int   toCompute = MetaballsTable.edgeToCompute[squareIndex];
+	 int   toCompute = MetaballsTable.edgeToCompute[squareIndex]; // 0,1,2,3
 	 float t = 0.0f;
 	 float value = 0.0f;
 	 if (toCompute>0)
 	 {
-	   if ( (toCompute & 1) > 0) // Edge 0 (1,3)
+	   if ( (toCompute & 1) > 0) // horizontal. Edge 0 (1,3)
 	   {
 	   		t	= (isovalue - gridValue[offset]) / (gridValue[offset+1] - gridValue[offset]); 
 			value   = vx*(1.0f-t) + t*(vx+stepx); 
@@ -236,7 +232,7 @@ void computeEdgeVertex(int iBlob, int x, int y)
 			if (value > blob[iBlob].xMax ) blob[iBlob].xMax = value;
 	      
 	   }
-	   if ( (toCompute & 2) > 0) // Edge 3 (2,3)
+	   if ( (toCompute & 2) > 0) // vertical. Edge 3 (2,3)
 	   {
 	   		t	= (isovalue - gridValue[offset]) / (gridValue[offset+resx] - gridValue[offset]); 
 	   		value   = vy*(1.0f-t) + t*(vy+stepy);

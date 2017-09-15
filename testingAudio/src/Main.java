@@ -9,8 +9,12 @@
 
 public class Main {
 
-	static String fileName1 = "kor2";//itadakimasuA;kor1;esp1
-	static String fileName2 = "kor1";//itadakimasuA;kor1;esp1
+							
+	static String fileName1 = "esp1"; // itadakimasu0; kor0; esp1
+	static String fileName2 = "kor1";
+	static String[] fileNames_jap = {"itadakimasuA","itadakimasuB","itadakimasuC"};
+	static String[] fileNames_esp = {"esp2","esp3","esp4"};
+	static String[] fileNames_kor = {"kor1","kor2","kor3"};
 	static boolean DEBUG = false;
 		
 	
@@ -19,11 +23,26 @@ public class Main {
 		// which do everything with its classes
 		// TODO
 		
-		AudioProcessing ap1 = new AudioProcessing(fileName1);
+		// 2 files
+		//execute(fileName1, fileName2);
+		
+		
+		// several files
+		String[] fileNames = fileNames_kor; //fileNames_esp; fileNames_kor; fileNames_jap
+		for (int i=0; i<fileNames.length; i++){
+			System.out.println("Prueba "+i+ "-> "+fileName1+" - "+fileNames[i]+" - - - - - - - - - - - ");
+			execute(fileName1, fileNames[i]);
+		}
+		
+    }
+	
+	public static void execute(String audiofile1, String audiofile2){
+		
+		AudioProcessing ap1 = new AudioProcessing(audiofile1);
 		ap1.process();
 		Matrix[] pics1 = ap1.getBoundedVals();
 
-		AudioProcessing ap2 = new AudioProcessing(fileName2);
+		AudioProcessing ap2 = new AudioProcessing(audiofile2);
 		ap2.process();
 		Matrix[] pics2 = ap2.getBoundedVals();//ap2.getBoundedPics();
 
@@ -33,9 +52,8 @@ public class Main {
 		
 		
 		comparar(pics1,pics2);
-		
-        
-    }
+	}
+	
 	
 	static void comparar(Matrix[] ms1, Matrix[] ms2){
 		int numMat = ms1.length;
@@ -65,18 +83,30 @@ public class Main {
 	}
 	
 	static void comparar(Matrix m1, Matrix m2){
-		double r;
-		r = Matrix.cosineSimilarity(m1.mat, m2.mat);
-        System.out.println("cosine similarity - res por fil:"+r);
+		double cs, sim;
+		cs = Matrix.cosineSimilarity(m1.mat, m2.mat); //por filas
+		sim = 1 - (2 * Math.acos(cs) / Math.PI);
+        System.out.println("cosine similarity:"+cs+" -> sim: "+sim);
+        
+        
+        // transpose para hacer la similitud por columnas --> da lo mismo ;)
         //r = Matrix.cosineSimilarity(Matrix.transpose(m1.h, m1.w, m1.mat), Matrix.transpose(m2.h, m2.w, m2.mat));
         //System.out.println("cosine similarity - res por col:"+r);
-        
         //printMatriz(m2.mat,"m2");
         
-        Matrix.printSimilarity(m1.h, m1.w, m1.mat, m2.mat);
+        int H = m1.h, W = m1.w;
+        
+        // comentar todos los prints para usar estos
+        //System.out.println(sim); 											// 1
+        //System.out.println(Matrix.distanciaInfinito(H,W,m1.mat,m2.mat));	// 2
+        //System.out.println(Matrix.distancia1(H,W,m1.mat,m2.mat));			// 3
+        //System.out.println(Matrix.distanciaF(H,W,m1.mat,m2.mat));			// 4
+
+        
+        Matrix.printDistances(H, W, m1.mat, m2.mat);
         Matrix.printStatics(m1.mat);
         Matrix.printStatics(m2.mat);
-
+		
 	}
 	
 	public static void printMatriz(double[] data,String name){

@@ -57,10 +57,10 @@ public class AudioProcessing {
 		
 		
 		// FFT+colores: version 1 -  a mano
-		fastFurierTransform_1();
-		picture1 = new Picture(fft_data.length, fft_data[0].length, fft_data);
+		//fastFurierTransform_1();
+		//picture1 = new Picture(fft_data.length, fft_data[0].length, fft_data);
 		// WRITE VALUE
-		ReadWriteRaw.writeIntToPlain(picture1.colors, fileName+"colores1");
+		//ReadWriteRaw.writeIntToPlain(picture1.colors, fileName+"colores1");
 
 		
 		/// FFT+colores: version 2 - musicg

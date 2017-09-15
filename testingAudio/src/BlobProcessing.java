@@ -102,6 +102,7 @@ public class BlobProcessing {
 			if (DEBUG) System.out.println("boundedPic "+i+" ejeY: "+y[0]+" < "+y[1]+" < "+picHeight);
 		    bVals[i] = new Matrix(vals,picHeight, picWidth);
 		    bVals[i].cortarEjeY(y[0], y[1]);
+		    bVals[i].cortarEjeX(x[0], x[1]);
 		  }
 		return bVals;
 	}
